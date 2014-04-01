@@ -8,6 +8,7 @@
     <orderEntry type="jdk" jdkName="1.7" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="tunnel_manager_lib" />
+    <orderEntry type="module" module-name="tunnel_manager" />
   </component>
 </module>
 
