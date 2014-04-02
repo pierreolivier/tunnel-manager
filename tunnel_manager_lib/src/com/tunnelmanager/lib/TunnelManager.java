@@ -1,7 +1,10 @@
 package com.tunnelmanager.lib;
 
 import com.tunnelmanager.commands.Command;
+import com.tunnelmanager.commands.LoginCommand;
+import com.tunnelmanager.lib.client.ClientManager;
 import com.tunnelmanager.lib.client.TunnelManagerConnection;
+import com.tunnelmanager.utils.Log;
 
 /**
  * Class TunnelManager
@@ -36,9 +39,15 @@ public class TunnelManager {
     }
 
     public void initialize() {
+        // Load configuration
+        ClientManager.loadPropertiesFile();
+
         // Init connection
         this.tunnelManagerConnection = new TunnelManagerConnection(this);
         this.tunnelManagerConnection.connect();
+
+        // Connection
+        this.tunnelManagerConnection.send(new LoginCommand(ClientManager.getPublicKey()));
     }
 
     public String getHost() {

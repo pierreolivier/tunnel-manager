@@ -24,6 +24,11 @@ public class Database {
     private static Connection connect = null;
 
     /**
+     * Table prefix
+     */
+    private static String tablePrefix;
+
+    /**
      * List of opened statements, the method clean closes all statements of the current instance
      */
     private List<Statement> statements;
@@ -32,11 +37,6 @@ public class Database {
      * List of opened resultSets, the method clean closes all resultSets of the current instance
      */
     private List<ResultSet> resultSets;
-
-    /**
-     * Table prefix
-     */
-    private String tablePrefix;
 
     /**
      * Default constructor

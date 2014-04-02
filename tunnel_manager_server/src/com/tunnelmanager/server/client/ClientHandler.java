@@ -62,6 +62,8 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
 
             return true;
         } else {
+            Log.v("error");
+
             return false;
         }
     }

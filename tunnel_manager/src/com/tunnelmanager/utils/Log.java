@@ -29,7 +29,7 @@ public class Log {
     public static void e(String text) {
         Date date = new Date();
 
-        DateFormat shortDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+        DateFormat shortDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.DEFAULT);
 
         System.err.println(shortDateFormat.format(date) + " " + text);
     }
