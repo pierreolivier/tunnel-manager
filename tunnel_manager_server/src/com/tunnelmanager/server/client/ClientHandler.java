@@ -1,6 +1,7 @@
 package com.tunnelmanager.server.client;
 
 import com.tunnelmanager.commands.Command;
+import com.tunnelmanager.server.database.Database;
 import com.tunnelmanager.utils.Log;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;

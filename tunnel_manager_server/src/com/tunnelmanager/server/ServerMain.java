@@ -30,6 +30,10 @@ public class ServerMain {
      */
     public void init(String args[]) {
         try {
+            ServerManager.loadPropertiesFile();
+
+            ServerManager.updateAuthorizedKeysFile();
+
             startClientSideServer();
         } catch (Exception e) {
             e.printStackTrace();

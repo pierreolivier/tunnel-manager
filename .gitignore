@@ -7,3 +7,4 @@ out/
 
 # Config
 config.properties
+tunnel_manager_server/authorized_keys
