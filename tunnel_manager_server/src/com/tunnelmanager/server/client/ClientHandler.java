@@ -2,6 +2,7 @@ package com.tunnelmanager.server.client;
 
 import com.tunnelmanager.commands.ClientCommand;
 import com.tunnelmanager.commands.Command;
+import com.tunnelmanager.commands.ServerCommand;
 import com.tunnelmanager.commands.authentication.LoginCommand;
 import com.tunnelmanager.handlers.ServerSideHandler;
 import com.tunnelmanager.server.database.User;
@@ -44,7 +45,7 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
 
             Log.v("new command : " + command.toString());
 
-            Command response = command.execute(this);
+            ServerCommand response = command.execute(this);
 
             if(response != null) {
                 context.writeAndFlush(response);

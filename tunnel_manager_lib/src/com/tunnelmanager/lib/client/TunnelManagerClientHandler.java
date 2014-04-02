@@ -1,6 +1,9 @@
 package com.tunnelmanager.lib.client;
 
+import com.tunnelmanager.commands.ClientCommand;
 import com.tunnelmanager.commands.Command;
+import com.tunnelmanager.commands.ServerCommand;
+import com.tunnelmanager.utils.Log;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -23,7 +26,11 @@ public class TunnelManagerClientHandler extends ChannelHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext context, Object msg) throws Exception {
+        if(msg instanceof ServerCommand) {
+            ServerCommand command = (ServerCommand) msg;
 
+            Log.v(command.toString());
+        }
     }
 
     @Override

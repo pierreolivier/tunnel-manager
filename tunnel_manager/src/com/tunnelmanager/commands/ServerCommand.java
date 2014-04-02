@@ -13,5 +13,5 @@ public abstract class ServerCommand extends Command {
         super(handler.nextAckId());
     }
 
-    public abstract Command execute(ClientSideHandler handler);
+    public abstract ClientCommand execute(ClientSideHandler handler);
 }
