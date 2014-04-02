@@ -4,9 +4,10 @@ import java.io.Serializable;
 
 /**
  * Class Command
+ * Abstract command
  *
  * @author Pierre-Olivier on 01/04/2014.
  */
-public class Command implements Serializable {
-    public String test;
+public abstract class Command implements Serializable {
+
 }

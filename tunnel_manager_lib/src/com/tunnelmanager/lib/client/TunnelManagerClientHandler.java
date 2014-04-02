@@ -6,6 +6,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 /**
  * Class TunnelManagerClientHandler
+ * client socket
  *
  * @author Pierre-Olivier on 01/04/2014.
  */

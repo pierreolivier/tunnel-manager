@@ -1,7 +1,13 @@
 package com.tunnelmanager.server.client;
 
+import com.tunnelmanager.commands.ClientCommand;
 import com.tunnelmanager.commands.Command;
+import com.tunnelmanager.commands.LoginCommand;
+import com.tunnelmanager.commands.ServerCommand;
+import com.tunnelmanager.handlers.ServerSideHandler;
 import com.tunnelmanager.server.database.Database;
+import com.tunnelmanager.server.database.User;
+import com.tunnelmanager.server.database.UsersManager;
 import com.tunnelmanager.utils.Log;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
@@ -12,16 +18,20 @@ import io.netty.channel.ChannelHandlerContext;
  *
  * @author Pierre-Olivier on 01/04/2014.
  */
-public class ClientHandler extends ChannelHandlerAdapter {
+public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHandler {
+    private User user;
+
     @Override
     public void channelRead(ChannelHandlerContext context, Object msg) throws Exception {
-        if(msg instanceof Command) {
-            Command command = (Command) msg;
+        if(msg instanceof ClientCommand) {
+            ClientCommand command = (ClientCommand) msg;
 
-            Log.v("new command : " + command.test);
+            Command response = command.execute(this);
+
+            if(response != null) {
+                context.writeAndFlush(response);
+            }
         }
-
-        context.write(msg);
     }
 
     @Override
@@ -39,5 +49,20 @@ public class ClientHandler extends ChannelHandlerAdapter {
         cause.printStackTrace();
 
         context.close();
+    }
+
+    @Override
+    public boolean login(LoginCommand command) {
+        User user = UsersManager.getUser(command.getSshPublicKey());
+
+        if(user != null) {
+            this.user = user;
+
+            Log.v(this.user.toString());
+
+            return true;
+        } else {
+            return false;
+        }
     }
 }

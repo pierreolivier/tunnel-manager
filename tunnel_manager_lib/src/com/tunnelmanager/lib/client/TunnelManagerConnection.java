@@ -17,11 +17,12 @@ import io.netty.handler.codec.serialization.ObjectEncoder;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * Class
+ * Class TunnelManagerConnection
+ * Connection manager
  *
  * @author Pierre-Olivier on 01/04/2014.
  */
-public class TunnelManagerConnection extends Thread {
+public class TunnelManagerConnection {
     /**
      * Tunnel Manager instance
      */

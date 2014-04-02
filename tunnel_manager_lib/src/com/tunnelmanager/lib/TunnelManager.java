@@ -5,6 +5,7 @@ import com.tunnelmanager.lib.client.TunnelManagerConnection;
 
 /**
  * Class TunnelManager
+ * Entry point of the library
  *
  * @author Pierre-Olivier on 01/04/2014.
  */
