@@ -1,6 +1,7 @@
 package com.tunnelmanager.server;
 
 import com.tunnelmanager.server.database.Database;
+import com.tunnelmanager.server.database.UsersManager;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,13 +12,20 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 /**
- * Class
+ * Class ServerManager
+ * Manage the server
  *
  * @author Pierre-Olivier on 02/04/2014.
  */
 public class ServerManager {
+    /**
+     * authorized_keys path
+     */
     private static String authorizedKeysPath;
 
+    /**
+     * Load properties file
+     */
     public static void loadPropertiesFile() {
         try {
             Properties prop = new Properties();
@@ -35,18 +43,12 @@ public class ServerManager {
     }
 
     public static void updateAuthorizedKeysFile() throws SQLException, IOException, ClassNotFoundException {
-        Database database = new Database();
         PrintWriter writer = new PrintWriter(ServerManager.authorizedKeysPath, "UTF-8");
 
-        ResultSet result = database.query("SELECT ssh_public_key FROM prefix_users");
-
-        while (result.next()) {
-            String sshPublicKey = result.getString("ssh_public_key");
-
+        for (String sshPublicKey : UsersManager.getAllSshPublicKeys()) {
             writer.println(sshPublicKey);
         }
 
         writer.close();
-        database.clean();
     }
 }

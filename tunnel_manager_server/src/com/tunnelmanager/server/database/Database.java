@@ -106,6 +106,8 @@ public class Database {
 
         exec = exec.replaceAll("prefix_", this.tablePrefix);
 
+        Log.e(exec);
+
         statement = Database.connect.createStatement();
 
         int nbUpdated = statement.executeUpdate(exec);
