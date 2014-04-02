@@ -38,6 +38,9 @@ public class TunnelManager {
         this.port = port;
     }
 
+    /**
+     * Initilize the library
+     */
     public void initialize() {
         // Load configuration
         ClientManager.loadPropertiesFile();
@@ -47,7 +50,7 @@ public class TunnelManager {
         this.tunnelManagerConnection.connect();
 
         // Connection
-        this.tunnelManagerConnection.send(new LoginCommand(ClientManager.getPublicKey()));
+        this.tunnelManagerConnection.send(new LoginCommand(ClientManager.getPublicKey(), ClientManager.getApiKey()));
     }
 
     public String getHost() {

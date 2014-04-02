@@ -10,13 +10,13 @@ public class User {
     private final int id;
     private final String sshPublicKey;
     private final String apiKey;
-    private final int allwedTunnels;
+    private final int allowedTunnels;
 
-    public User(int id, String sshPublicKey, String apiKey, int allwedTunnels) {
+    public User(int id, String sshPublicKey, String apiKey, int allowedTunnels) {
         this.id = id;
         this.sshPublicKey = sshPublicKey;
         this.apiKey = apiKey;
-        this.allwedTunnels = allwedTunnels;
+        this.allowedTunnels = allowedTunnels;
     }
 
     public int getId() {
@@ -31,8 +31,8 @@ public class User {
         return apiKey;
     }
 
-    public int getAllwedTunnels() {
-        return allwedTunnels;
+    public int getAllowedTunnels() {
+        return allowedTunnels;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class User {
                 "id=" + id +
                 ", sshPublicKey='" + sshPublicKey + '\'' +
                 ", apiKey='" + apiKey + '\'' +
-                ", allwedTunnels=" + allwedTunnels +
+                ", allowedTunnels=" + allowedTunnels +
                 '}';
     }
 }

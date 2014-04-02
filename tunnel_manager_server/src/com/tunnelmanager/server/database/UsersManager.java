@@ -32,12 +32,12 @@ public class UsersManager {
         return resultList;
     }
 
-    public static User getUser(String sshPublicKey) {
+    public static User getUser(String sshPublicKey, String apiKey) {
         Database database = new Database();
         User resultUser = null;
 
         try {
-            ResultSet resultQuery = database.query("SELECT * FROM prefix_users WHERE ssh_public_key = '" + sshPublicKey + "'");
+            ResultSet resultQuery = database.query("SELECT * FROM prefix_users WHERE ssh_public_key = '" + sshPublicKey + "' AND api_key = '" + apiKey + "'");
 
             if(resultQuery.last() && resultQuery.getRow() == 1) {
                 resultUser = new User(resultQuery.getInt("id"), resultQuery.getString("ssh_public_key"), resultQuery.getString("api_key"), resultQuery.getInt("allowed_tunnels"));

@@ -53,7 +53,7 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
 
     @Override
     public boolean login(LoginCommand command) {
-        User user = UsersManager.getUser(command.getSshPublicKey());
+        User user = UsersManager.getUser(command.getSshPublicKey(), command.getApiKey());
 
         if(user != null) {
             this.user = user;
@@ -62,8 +62,6 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
 
             return true;
         } else {
-            Log.v("error");
-
             return false;
         }
     }

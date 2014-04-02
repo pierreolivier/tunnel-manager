@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Class
+ * Class ClientManager
+ * Manage the client
  *
  * @author Pierre-Olivier on 02/04/2014.
  */
@@ -19,6 +20,11 @@ public class ClientManager {
      * id_rsa.pub path
      */
     private static String publicKeyPath;
+
+    /**
+     * api key
+     */
+    private static String apiKey;
 
     /**
      * Load properties file
@@ -30,6 +36,7 @@ public class ClientManager {
             prop.load(input);
 
             ClientManager.publicKeyPath = prop.getProperty("public_key_path");
+            ClientManager.apiKey = prop.getProperty("api_key");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -39,10 +46,19 @@ public class ClientManager {
         return publicKeyPath;
     }
 
+    public static String getApiKey() {
+        return apiKey;
+    }
+
     public static String getPublicKey() {
         return ClientManager.getPublicKey(ClientManager.publicKeyPath);
     }
 
+    /**
+     * Get public key of spefific path
+     * @param path path of id_rsa.pub
+     * @return two first tokens of id_rsa.pub
+     */
     public static String getPublicKey(final String path) {
         String result = null;
 

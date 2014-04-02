@@ -15,11 +15,17 @@ public class LoginCommand extends ClientCommand {
     private final String sshPublicKey;
 
     /**
+     * Api Key
+     */
+    private final String apiKey;
+
+    /**
      * Default Constructor
      * @param sshPublicKey ssh public key used for the login
      */
-    public LoginCommand(String sshPublicKey) {
+    public LoginCommand(String sshPublicKey, String apiKey) {
         this.sshPublicKey = sshPublicKey;
+        this.apiKey = apiKey;
     }
 
     @Override
@@ -35,5 +41,9 @@ public class LoginCommand extends ClientCommand {
 
     public String getSshPublicKey() {
         return sshPublicKey;
+    }
+
+    public String getApiKey() {
+        return apiKey;
     }
 }
