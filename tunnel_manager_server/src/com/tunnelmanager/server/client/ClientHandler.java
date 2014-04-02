@@ -2,15 +2,17 @@ package com.tunnelmanager.server.client;
 
 import com.tunnelmanager.commands.ClientCommand;
 import com.tunnelmanager.commands.Command;
-import com.tunnelmanager.commands.LoginCommand;
-import com.tunnelmanager.commands.ServerCommand;
+import com.tunnelmanager.commands.authentication.LoginCommand;
 import com.tunnelmanager.handlers.ServerSideHandler;
-import com.tunnelmanager.server.database.Database;
 import com.tunnelmanager.server.database.User;
 import com.tunnelmanager.server.database.UsersManager;
 import com.tunnelmanager.utils.Log;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Class ClientHandler
@@ -19,12 +21,28 @@ import io.netty.channel.ChannelHandlerContext;
  * @author Pierre-Olivier on 01/04/2014.
  */
 public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHandler {
+    /**
+     * Current user
+     */
     private User user;
+
+    /**
+     * ackIds
+     */
+    private List<Integer> ackIds;
+
+    public ClientHandler() {
+        super();
+
+        this.ackIds = new ArrayList<>();
+    }
 
     @Override
     public void channelRead(ChannelHandlerContext context, Object msg) throws Exception {
         if(msg instanceof ClientCommand) {
             ClientCommand command = (ClientCommand) msg;
+
+            Log.v("new command : " + command.toString());
 
             Command response = command.execute(this);
 
@@ -64,5 +82,20 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
         } else {
             return false;
         }
+    }
+
+    @Override
+    public int nextAckId() {
+        Integer ackId;
+
+        synchronized (this.ackIds) {
+            Random random = new Random();
+
+            do {
+                ackId = random.nextInt(9000) + 1000;
+            } while(this.ackIds.contains(ackId));
+        }
+
+        return ackId;
     }
 }

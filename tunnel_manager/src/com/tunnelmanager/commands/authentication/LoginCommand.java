@@ -1,5 +1,8 @@
-package com.tunnelmanager.commands;
+package com.tunnelmanager.commands.authentication;
 
+import com.tunnelmanager.commands.ClientCommand;
+import com.tunnelmanager.commands.Command;
+import com.tunnelmanager.handlers.ClientSideHandler;
 import com.tunnelmanager.handlers.ServerSideHandler;
 
 /**
@@ -22,8 +25,11 @@ public class LoginCommand extends ClientCommand {
     /**
      * Default Constructor
      * @param sshPublicKey ssh public key used for the login
+     * @param apiKey api key used for the login
      */
-    public LoginCommand(String sshPublicKey, String apiKey) {
+    public LoginCommand(ClientSideHandler handler, String sshPublicKey, String apiKey) {
+        super(handler);
+
         this.sshPublicKey = sshPublicKey;
         this.apiKey = apiKey;
     }
@@ -45,5 +51,14 @@ public class LoginCommand extends ClientCommand {
 
     public String getApiKey() {
         return apiKey;
+    }
+
+    @Override
+    public String toString() {
+        return "LoginCommand{" +
+                "ackId='" + ackId + '\'' +
+                ", sshPublicKey='" + sshPublicKey + '\'' +
+                ", apiKey='" + apiKey + '\'' +
+                '}';
     }
 }

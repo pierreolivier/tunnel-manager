@@ -1,6 +1,7 @@
 package com.tunnelmanager.lib.client;
 
 import com.tunnelmanager.commands.Command;
+import com.tunnelmanager.handlers.ClientSideHandler;
 import com.tunnelmanager.lib.TunnelManager;
 import com.tunnelmanager.utils.Log;
 import io.netty.bootstrap.Bootstrap;
@@ -14,6 +15,9 @@ import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -22,7 +26,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  *
  * @author Pierre-Olivier on 01/04/2014.
  */
-public class TunnelManagerConnection {
+public class TunnelManagerConnection implements ClientSideHandler {
     /**
      * Tunnel Manager instance
      */
@@ -44,11 +48,20 @@ public class TunnelManagerConnection {
     private TunnelManagerClientHandler clientHandler;
 
     /**
+     * ackIds
+     */
+    private List<Integer> ackIds;
+
+    /**
      * Default contructor
      * @param tunnelManager current instance of tunnel manager
      */
     public TunnelManagerConnection(TunnelManager tunnelManager) {
+        super();
+
         this.tunnelManager = tunnelManager;
+
+        this.ackIds = new ArrayList<>();
     }
 
     /**
@@ -90,5 +103,20 @@ public class TunnelManagerConnection {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public int nextAckId() {
+        Integer ackId;
+
+        synchronized (this.ackIds) {
+            Random random = new Random();
+
+            do {
+                ackId = random.nextInt(9000) + 1000;
+            } while(this.ackIds.contains(ackId));
+        }
+
+        return ackId;
     }
 }
