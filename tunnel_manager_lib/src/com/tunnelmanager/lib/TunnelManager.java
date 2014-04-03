@@ -28,6 +28,11 @@ public class TunnelManager {
     private TunnelManagerConnection tunnelManagerConnection;
 
     /**
+     * User handler
+     */
+    private TunnelManagerHandler tunnelManagerHandler;
+
+    /**
      * Default constructor
      * @param host server host
      * @param port server client side port
@@ -58,5 +63,13 @@ public class TunnelManager {
 
     public int getPort() {
         return port;
+    }
+
+    public TunnelManagerHandler getTunnelManagerHandler() {
+        return tunnelManagerHandler;
+    }
+
+    public void setTunnelManagerHandler(TunnelManagerHandler tunnelManagerHandler) {
+        this.tunnelManagerHandler = tunnelManagerHandler;
     }
 }

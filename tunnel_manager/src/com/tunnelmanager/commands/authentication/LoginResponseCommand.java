@@ -1,7 +1,6 @@
 package com.tunnelmanager.commands.authentication;
 
 import com.tunnelmanager.commands.ClientCommand;
-import com.tunnelmanager.commands.Command;
 import com.tunnelmanager.commands.ServerCommand;
 import com.tunnelmanager.handlers.ClientSideHandler;
 import com.tunnelmanager.handlers.ServerSideHandler;
@@ -29,6 +28,8 @@ public class LoginResponseCommand extends ServerCommand {
 
     @Override
     public ClientCommand execute(ClientSideHandler handler) {
+        handler.onLoginResponse(this.loginStatus);
+
         return null;
     }
 

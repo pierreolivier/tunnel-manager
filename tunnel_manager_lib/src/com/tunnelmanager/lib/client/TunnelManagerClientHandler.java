@@ -19,6 +19,19 @@ public class TunnelManagerClientHandler extends ChannelHandlerAdapter {
      */
     private ChannelHandlerContext context;
 
+    /**
+     * Connection
+     */
+    private TunnelManagerConnection tunnelManagerConnection;
+
+    /**
+     * Default constructor
+     * @param tunnelManagerConnection connection instance
+     */
+    public TunnelManagerClientHandler(TunnelManagerConnection tunnelManagerConnection) {
+        this.tunnelManagerConnection = tunnelManagerConnection;
+    }
+
     @Override
     public void channelActive(ChannelHandlerContext context) throws Exception {
         this.context = context;
@@ -30,6 +43,12 @@ public class TunnelManagerClientHandler extends ChannelHandlerAdapter {
             ServerCommand command = (ServerCommand) msg;
 
             Log.v(command.toString());
+
+            ClientCommand response = command.execute(this.tunnelManagerConnection);
+
+            if(response != null) {
+                context.writeAndFlush(response);
+            }
         }
     }
 

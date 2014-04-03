@@ -13,7 +13,13 @@ public class SampleLauncher {
     public static void main(String[] args) {
         Log.v("client initialization...");
 
+        TunnelHandler handler = new TunnelHandler();
+
         TunnelManager tunnelManager = new TunnelManager("127.0.0.1", 12000);
+        tunnelManager.setTunnelManagerHandler(handler);
+
         tunnelManager.initialize();
+
+
     }
 }

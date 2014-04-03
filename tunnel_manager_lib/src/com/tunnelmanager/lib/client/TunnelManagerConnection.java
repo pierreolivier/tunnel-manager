@@ -70,7 +70,7 @@ public class TunnelManagerConnection implements ClientSideHandler {
      */
     public void connect() {
         this.group = new NioEventLoopGroup();
-        this.clientHandler = new TunnelManagerClientHandler();
+        this.clientHandler = new TunnelManagerClientHandler(this);
         try {
             Bootstrap b = new Bootstrap();
             b.group(this.group)
@@ -118,5 +118,12 @@ public class TunnelManagerConnection implements ClientSideHandler {
         }
 
         return ackId;
+    }
+
+    @Override
+    public void onLoginResponse(int status) {
+        if(this.tunnelManager.getTunnelManagerHandler() != null) {
+            this.tunnelManager.getTunnelManagerHandler().onLoginResponse(status);
+        }
     }
 }

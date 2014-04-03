@@ -5,5 +5,6 @@ package com.tunnelmanager.lib;
  *
  * @author Pierre-Olivier on 01/04/2014.
  */
-public class TunnelManagerHandler {
+public abstract class TunnelManagerHandler {
+    public abstract void onLoginResponse(int status);
 }
