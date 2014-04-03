@@ -28,8 +28,8 @@ public class LoginCommand extends ClientCommand {
      * @param sshPublicKey ssh public key used for the login
      * @param apiKey api key used for the login
      */
-    public LoginCommand(ClientSideHandler handler, String sshPublicKey, String apiKey) {
-        super(handler);
+    public LoginCommand(int ackId, String sshPublicKey, String apiKey) {
+        super(ackId);
 
         this.sshPublicKey = sshPublicKey;
         this.apiKey = apiKey;
@@ -40,9 +40,9 @@ public class LoginCommand extends ClientCommand {
         LoginResponseCommand loginResponseCommand;
 
         if(handler.login(this)) {
-            loginResponseCommand = new LoginResponseCommand(handler, LoginResponseCommand.CONNECTED);
+            loginResponseCommand = new LoginResponseCommand(this.ackId, LoginResponseCommand.CONNECTED);
         } else {
-            loginResponseCommand = new LoginResponseCommand(handler, LoginResponseCommand.ERROR);
+            loginResponseCommand = new LoginResponseCommand(this.ackId, LoginResponseCommand.ERROR);
         }
 
         return loginResponseCommand;

@@ -3,9 +3,13 @@ package com.tunnelmanager.lib.client;
 import com.tunnelmanager.commands.ClientCommand;
 import com.tunnelmanager.commands.Command;
 import com.tunnelmanager.commands.ServerCommand;
+import com.tunnelmanager.commands.authentication.LoginCommand;
 import com.tunnelmanager.utils.Log;
-import io.netty.channel.ChannelHandlerAdapter;
-import io.netty.channel.ChannelHandlerContext;
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.*;
+
+import java.lang.annotation.Annotation;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Class TunnelManagerClientHandler
@@ -13,6 +17,7 @@ import io.netty.channel.ChannelHandlerContext;
  *
  * @author Pierre-Olivier on 01/04/2014.
  */
+@ChannelHandler.Sharable
 public class TunnelManagerClientHandler extends ChannelHandlerAdapter {
     /**
      * Netty channel context
@@ -35,6 +40,19 @@ public class TunnelManagerClientHandler extends ChannelHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext context) throws Exception {
         this.context = context;
+
+        send(new LoginCommand(this.tunnelManagerConnection.nextAckId(), ClientManager.getPublicKey(), ClientManager.getApiKey()));
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        final EventLoop loop = ctx.channel().eventLoop();
+        loop.schedule(new Runnable() {
+            @Override
+            public void run() {
+                tunnelManagerConnection.connect(tunnelManagerConnection.configureBootstrap(new Bootstrap(), loop));
+            }
+        }, 3, TimeUnit.SECONDS);
     }
 
     @Override
@@ -43,6 +61,8 @@ public class TunnelManagerClientHandler extends ChannelHandlerAdapter {
             ServerCommand command = (ServerCommand) msg;
 
             Log.v(command.toString());
+
+            this.tunnelManagerConnection.removeAckId(command.getAckId());
 
             ClientCommand response = command.execute(this.tunnelManagerConnection);
 

@@ -20,8 +20,8 @@ public class LoginResponseCommand extends ServerCommand {
      */
     private int loginStatus;
 
-    public LoginResponseCommand(ServerSideHandler handler, int loginStatus) {
-        super(handler);
+    public LoginResponseCommand(int ackId, int loginStatus) {
+        super(ackId);
 
         this.loginStatus = loginStatus;
     }

@@ -3,6 +3,7 @@ package com.tunnelmanager.server;
 import com.tunnelmanager.server.client.ClientHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -60,7 +61,8 @@ public class ServerMain {
                                     new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
                                     new ClientHandler());
                         }
-                    });
+                    })
+                    .childOption(ChannelOption.SO_KEEPALIVE, true);;
 
             b.bind(ServerMain.PORT).sync().channel().closeFuture().sync();
         } finally {

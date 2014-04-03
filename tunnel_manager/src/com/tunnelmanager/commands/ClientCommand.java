@@ -9,8 +9,8 @@ import com.tunnelmanager.handlers.ServerSideHandler;
  * @author Pierre-Olivier on 02/04/2014.
  */
 public abstract class ClientCommand extends Command {
-    public ClientCommand(ClientSideHandler handler) {
-        super(handler.nextAckId());
+    public ClientCommand(int ackId) {
+        super(ackId);
     }
 
     public abstract ServerCommand execute(ServerSideHandler handler);

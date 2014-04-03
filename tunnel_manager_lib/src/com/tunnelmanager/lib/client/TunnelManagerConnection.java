@@ -5,9 +5,7 @@ import com.tunnelmanager.handlers.ClientSideHandler;
 import com.tunnelmanager.lib.TunnelManager;
 import com.tunnelmanager.utils.Log;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -19,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Class TunnelManagerConnection
@@ -50,7 +49,7 @@ public class TunnelManagerConnection implements ClientSideHandler {
     /**
      * ackIds
      */
-    private List<Integer> ackIds;
+    public List<Integer> ackIds;
 
     /**
      * Default contructor
@@ -61,6 +60,7 @@ public class TunnelManagerConnection implements ClientSideHandler {
 
         this.tunnelManager = tunnelManager;
 
+        this.clientHandler = new TunnelManagerClientHandler(this);
         this.ackIds = new ArrayList<>();
     }
 
@@ -69,27 +69,61 @@ public class TunnelManagerConnection implements ClientSideHandler {
      * This function is blocked while server is connected or something wrong happened
      */
     public void connect() {
-        this.group = new NioEventLoopGroup();
-        this.clientHandler = new TunnelManagerClientHandler(this);
-        try {
-            Bootstrap b = new Bootstrap();
-            b.group(this.group)
-                    .channel(NioSocketChannel.class)
-                    .handler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        public void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(
-                                    new ObjectEncoder(),
-                                    new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
-                                    TunnelManagerConnection.this.clientHandler);
+        configureBootstrap(new Bootstrap())
+                .connect(this.tunnelManager.getHost(), this.tunnelManager.getPort())
+                .addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture future) throws Exception {
+                        if (!future.isSuccess()) {
+                            final EventLoop loop = future.channel().eventLoop();
+                            loop.schedule(new Runnable() {
+                                @Override
+                                public void run() {
+                                    connect(configureBootstrap(new Bootstrap(), loop));
+                                }
+                            }, 3, TimeUnit.SECONDS);
                         }
-                    });
+                    }
+                });
+    }
 
-            // Make a new connection.
-            this.channelFuture = b.connect(this.tunnelManager.getHost(), this.tunnelManager.getPort()).sync();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void connect(Bootstrap bootstrap) {
+        bootstrap
+                .connect(this.tunnelManager.getHost(), this.tunnelManager.getPort())
+                .addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture future) throws Exception {
+                        if (!future.isSuccess()) {
+                            final EventLoop loop = future.channel().eventLoop();
+                            loop.schedule(new Runnable() {
+                                @Override
+                                public void run() {
+                                    connect(configureBootstrap(new Bootstrap(), loop));
+                                }
+                            }, 3, TimeUnit.SECONDS);
+                        }
+                    }
+                });
+    }
+
+    private Bootstrap configureBootstrap(Bootstrap b) {
+        return configureBootstrap(b, new NioEventLoopGroup());
+    }
+
+    public Bootstrap configureBootstrap(Bootstrap bootstrap, EventLoopGroup group) {
+        this.group = group;
+        bootstrap.group(group)
+                .channel(NioSocketChannel.class)
+                .handler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    public void initChannel(SocketChannel ch) throws Exception {
+                        ch.pipeline().addLast(
+                                new ObjectEncoder(),
+                                new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
+                                TunnelManagerConnection.this.clientHandler);
+                    }
+                });
+        return bootstrap;
     }
 
     public void close() throws InterruptedException {
@@ -113,11 +147,20 @@ public class TunnelManagerConnection implements ClientSideHandler {
             Random random = new Random();
 
             do {
-                ackId = random.nextInt(9000) + 1000;
+                ackId = random.nextInt(4000) + 1000;
             } while(this.ackIds.contains(ackId));
+
+            this.ackIds.add(new Integer(ackId));
         }
 
         return ackId;
+    }
+
+    @Override
+    public void removeAckId(int ackId) {
+        synchronized (this.ackIds) {
+            this.ackIds.remove(new Integer(ackId));
+        }
     }
 
     @Override

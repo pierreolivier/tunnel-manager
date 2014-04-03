@@ -11,4 +11,9 @@ public interface Handler {
      * @return ack id
      */
     public int nextAckId();
+
+    /**
+     * Remove ack id
+     */
+    public void removeAckId(int ackId);
 }

@@ -45,6 +45,8 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
 
             Log.v("new command : " + command.toString());
 
+            removeAckId(command.getAckId());
+
             ServerCommand response = command.execute(this);
 
             if(response != null) {
@@ -93,10 +95,19 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
             Random random = new Random();
 
             do {
-                ackId = random.nextInt(9000) + 1000;
+                ackId = random.nextInt(5000) + 5000;
             } while(this.ackIds.contains(ackId));
+
+            this.ackIds.add(new Integer(ackId));
         }
 
         return ackId;
+    }
+
+    @Override
+    public void removeAckId(int ackId) {
+        synchronized (this.ackIds) {
+            this.ackIds.remove(new Integer(ackId));
+        }
     }
 }

@@ -22,4 +22,8 @@ public abstract class Command implements Serializable {
 
         this.ackId = ackId;
     }
+
+    public int getAckId() {
+        return ackId;
+    }
 }
