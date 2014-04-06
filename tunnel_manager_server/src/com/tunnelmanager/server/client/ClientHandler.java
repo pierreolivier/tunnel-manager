@@ -1,9 +1,11 @@
 package com.tunnelmanager.server.client;
 
 import com.tunnelmanager.commands.ClientCommand;
+import com.tunnelmanager.commands.Command;
 import com.tunnelmanager.commands.ServerCommand;
 import com.tunnelmanager.commands.authentication.LoginCommand;
 import com.tunnelmanager.handlers.ServerSideHandler;
+import com.tunnelmanager.server.ServerManager;
 import com.tunnelmanager.server.database.User;
 import com.tunnelmanager.server.database.UsersManager;
 import com.tunnelmanager.utils.Log;
@@ -20,6 +22,11 @@ import java.util.Random;
  * @author Pierre-Olivier on 01/04/2014.
  */
 public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHandler {
+    /**
+     * Netty channel context
+     */
+    private ChannelHandlerContext context;
+
     /**
      * Current user
      */
@@ -60,7 +67,14 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        this.context = ctx;
+    }
 
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        if(this.user != null) {
+            ServerManager.removeClient(this.user.getApiKey());
+        }
     }
 
     @Override
@@ -76,6 +90,8 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
 
         if(user != null) {
             this.user = user;
+
+            ServerManager.addClient(command.getApiKey(), this);
 
             Log.v(this.user.toString());
 
@@ -115,6 +131,12 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
                 runnable.run();
             }
             this.ackIds.remove(new Integer(ackId));
+        }
+    }
+
+    public void send(Command command) {
+        if(this.context != null) {
+            this.context.writeAndFlush(command);
         }
     }
 }

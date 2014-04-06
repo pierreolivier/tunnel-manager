@@ -1,5 +1,6 @@
 package com.tunnelmanager.server;
 
+import com.tunnelmanager.server.client.ClientHandler;
 import com.tunnelmanager.server.database.UsersManager;
 import com.tunnelmanager.utils.Log;
 
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Properties;
 
 /**
@@ -31,6 +33,8 @@ public class ServerManager {
     private static String certificatePassword;
 
     private static String certificateKeyStorePassword;
+
+    private static HashMap<String, ClientHandler> clients = new HashMap<>();
 
     /**
      * Load properties file
@@ -88,5 +92,23 @@ public class ServerManager {
         }
 
         writer.close();
+    }
+
+    public static void addClient(String apiKey, ClientHandler handler) {
+        synchronized (ServerManager.clients) {
+            ServerManager.clients.put(apiKey, handler);
+        }
+    }
+
+    public static ClientHandler getClient(String apiKey) {
+        synchronized (ServerManager.clients) {
+            return ServerManager.clients.get(apiKey);
+        }
+    }
+
+    public static void removeClient(String apiKey) {
+        synchronized (ServerManager.clients) {
+            ServerManager.clients.remove(apiKey);
+        }
     }
 }
