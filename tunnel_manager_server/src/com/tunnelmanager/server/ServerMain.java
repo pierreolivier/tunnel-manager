@@ -1,6 +1,7 @@
 package com.tunnelmanager.server;
 
 import com.tunnelmanager.server.client.ClientHandler;
+import com.tunnelmanager.server.security.SecurityContextFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -11,6 +12,9 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
+import io.netty.handler.ssl.SslHandler;
+
+import javax.net.ssl.SSLEngine;
 
 /**
  * Class ServerMain
@@ -56,13 +60,17 @@ public class ServerMain {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
+                            SSLEngine engine = SecurityContextFactory.getContext().createSSLEngine();
+                            engine.setUseClientMode(false);
+
+                            ch.pipeline().addLast("ssl", new SslHandler(engine));
                             ch.pipeline().addLast(
                                     new ObjectEncoder(),
                                     new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
                                     new ClientHandler());
                         }
                     })
-                    .childOption(ChannelOption.SO_KEEPALIVE, true);;
+                    .childOption(ChannelOption.SO_KEEPALIVE, true);
 
             b.bind(ServerMain.PORT).sync().channel().closeFuture().sync();
         } finally {

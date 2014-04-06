@@ -10,6 +10,7 @@ import com.tunnelmanager.server.database.UsersManager;
 import com.tunnelmanager.utils.Log;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.ssl.SslHandler;
 
 import java.util.ArrayList;
 import java.util.List;

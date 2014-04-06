@@ -1,3 +1,5 @@
 Manifest-Version: 1.0
+Class-Path: netty-all-5.0.0.Alpha1.jar netty-all-5.0.0.Alpha1-sources.
+ jar mysql-connector-java-5.1.30-bin.jar
 Main-Class: com.tunnelmanager.server.ServerLauncher
 

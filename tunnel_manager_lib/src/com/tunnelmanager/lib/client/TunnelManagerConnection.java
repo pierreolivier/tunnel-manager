@@ -3,16 +3,21 @@ package com.tunnelmanager.lib.client;
 import com.tunnelmanager.commands.Command;
 import com.tunnelmanager.handlers.ClientSideHandler;
 import com.tunnelmanager.lib.TunnelManager;
+import com.tunnelmanager.lib.client.security.SecurityContextFactory;
 import com.tunnelmanager.utils.Log;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
+import io.netty.handler.ssl.SslHandler;
 
+import javax.net.ssl.SSLEngine;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -117,6 +122,10 @@ public class TunnelManagerConnection implements ClientSideHandler {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     public void initChannel(SocketChannel ch) throws Exception {
+                        SSLEngine engine = SecurityContextFactory.getContext().createSSLEngine();
+                        engine.setUseClientMode(true);
+
+                        ch.pipeline().addLast("ssl", new SslHandler(engine));
                         ch.pipeline().addLast(
                                 new ObjectEncoder(),
                                 new ObjectDecoder(ClassResolvers.cacheDisabled(null)),

@@ -1,13 +1,11 @@
 package com.tunnelmanager.server;
 
-import com.tunnelmanager.server.database.Database;
 import com.tunnelmanager.server.database.UsersManager;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -23,6 +21,12 @@ public class ServerManager {
      */
     private static String authorizedKeysPath;
 
+    private static String certificatePath;
+
+    private static String certificatePassword;
+
+    private static String certificateKeyStorePassword;
+
     /**
      * Load properties file
      */
@@ -33,6 +37,9 @@ public class ServerManager {
             prop.load(input);
 
             ServerManager.authorizedKeysPath = prop.getProperty("authorized_keys_path");
+            ServerManager.certificatePath = prop.getProperty("certificate_path");
+            ServerManager.certificatePassword = prop.getProperty("certificate_password");
+            ServerManager.certificateKeyStorePassword = prop.getProperty("certificate_key_store_password");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -40,6 +47,18 @@ public class ServerManager {
 
     public static String getAuthorizedKeysPath() {
         return authorizedKeysPath;
+    }
+
+    public static String getCertificatePath() {
+        return certificatePath;
+    }
+
+    public static String getCertificatePassword() {
+        return certificatePassword;
+    }
+
+    public static String getCertificateKeyStorePassword() {
+        return certificateKeyStorePassword;
     }
 
     public static void updateAuthorizedKeysFile() throws SQLException, IOException, ClassNotFoundException {

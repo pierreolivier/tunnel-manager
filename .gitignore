@@ -9,3 +9,4 @@ out/
 config.properties
 tunnel_manager_server/authorized_keys
 tunnel_manager_sample/id_rsa.pub
+tunnel_manager_server/certificate.jks
