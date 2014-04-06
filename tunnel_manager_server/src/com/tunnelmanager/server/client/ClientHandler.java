@@ -1,7 +1,6 @@
 package com.tunnelmanager.server.client;
 
 import com.tunnelmanager.commands.ClientCommand;
-import com.tunnelmanager.commands.Command;
 import com.tunnelmanager.commands.ServerCommand;
 import com.tunnelmanager.commands.authentication.LoginCommand;
 import com.tunnelmanager.handlers.ServerSideHandler;
@@ -10,10 +9,8 @@ import com.tunnelmanager.server.database.UsersManager;
 import com.tunnelmanager.utils.Log;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.ssl.SslHandler;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Random;
 
 /**
@@ -31,12 +28,12 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
     /**
      * ackIds
      */
-    private List<Integer> ackIds;
+    public HashMap<Integer, Runnable> ackIds;
 
     public ClientHandler() {
         super();
 
-        this.ackIds = new ArrayList<>();
+        this.ackIds = new HashMap<>();
     }
 
     @Override
@@ -46,7 +43,7 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
 
             Log.v("new command : " + command.toString());
 
-            removeAckId(command.getAckId());
+            removeAck(command.getAckId());
 
             ServerCommand response = command.execute(this);
 
@@ -89,25 +86,34 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
     }
 
     @Override
-    public int nextAckId() {
+    public int createAck() {
+        return createAck(null);
+    }
+
+    @Override
+    public int createAck(Runnable runnable) {
         Integer ackId;
 
         synchronized (this.ackIds) {
             Random random = new Random();
 
             do {
-                ackId = random.nextInt(5000) + 5000;
-            } while(this.ackIds.contains(ackId));
+                ackId = new Integer(random.nextInt(5000) + 5000);
+            } while(this.ackIds.containsKey(ackId));
 
-            this.ackIds.add(new Integer(ackId));
+            this.ackIds.put(new Integer(ackId), runnable);
         }
 
         return ackId;
     }
 
     @Override
-    public void removeAckId(int ackId) {
+    public void removeAck(int ackId) {
         synchronized (this.ackIds) {
+            Runnable runnable = this.ackIds.get(new Integer(ackId));
+            if(runnable != null) {
+                runnable.run();
+            }
             this.ackIds.remove(new Integer(ackId));
         }
     }

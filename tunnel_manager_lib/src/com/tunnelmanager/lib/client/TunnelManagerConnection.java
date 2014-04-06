@@ -4,24 +4,19 @@ import com.tunnelmanager.commands.Command;
 import com.tunnelmanager.handlers.ClientSideHandler;
 import com.tunnelmanager.lib.TunnelManager;
 import com.tunnelmanager.lib.client.security.SecurityContextFactory;
-import com.tunnelmanager.utils.Log;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
-import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.ssl.SslHandler;
 
 import javax.net.ssl.SSLEngine;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Random;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -54,7 +49,7 @@ public class TunnelManagerConnection implements ClientSideHandler {
     /**
      * ackIds
      */
-    public List<Integer> ackIds;
+    public HashMap<Integer, Runnable> ackIds;
 
     /**
      * Default contructor
@@ -66,7 +61,7 @@ public class TunnelManagerConnection implements ClientSideHandler {
         this.tunnelManager = tunnelManager;
 
         this.clientHandler = new TunnelManagerClientHandler(this);
-        this.ackIds = new ArrayList<>();
+        this.ackIds = new HashMap<>();
     }
 
     /**
@@ -149,25 +144,34 @@ public class TunnelManagerConnection implements ClientSideHandler {
     }
 
     @Override
-    public int nextAckId() {
+    public int createAck() {
+        return createAck(null);
+    }
+
+    @Override
+    public int createAck(Runnable runnable) {
         Integer ackId;
 
         synchronized (this.ackIds) {
             Random random = new Random();
 
             do {
-                ackId = random.nextInt(4000) + 1000;
-            } while(this.ackIds.contains(ackId));
+                ackId = new Integer(random.nextInt(4000) + 1000);
+            } while(this.ackIds.containsKey(ackId));
 
-            this.ackIds.add(new Integer(ackId));
+            this.ackIds.put(new Integer(ackId), runnable);
         }
 
         return ackId;
     }
 
     @Override
-    public void removeAckId(int ackId) {
+    public void removeAck(int ackId) {
         synchronized (this.ackIds) {
+            Runnable runnable = this.ackIds.get(new Integer(ackId));
+            if(runnable != null) {
+                runnable.run();
+            }
             this.ackIds.remove(new Integer(ackId));
         }
     }

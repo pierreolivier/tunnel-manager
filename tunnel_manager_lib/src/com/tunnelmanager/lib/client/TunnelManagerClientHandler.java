@@ -8,7 +8,6 @@ import com.tunnelmanager.utils.Log;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 
-import java.lang.annotation.Annotation;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -41,7 +40,7 @@ public class TunnelManagerClientHandler extends ChannelHandlerAdapter {
     public void channelActive(ChannelHandlerContext context) throws Exception {
         this.context = context;
 
-        send(new LoginCommand(this.tunnelManagerConnection.nextAckId(), ClientManager.getPublicKey(), ClientManager.getApiKey()));
+        send(new LoginCommand(this.tunnelManagerConnection.createAck(), ClientManager.getPublicKey(), ClientManager.getApiKey()));
     }
 
     @Override
@@ -62,7 +61,7 @@ public class TunnelManagerClientHandler extends ChannelHandlerAdapter {
 
             Log.v(command.toString());
 
-            this.tunnelManagerConnection.removeAckId(command.getAckId());
+            this.tunnelManagerConnection.removeAck(command.getAckId());
 
             ClientCommand response = command.execute(this.tunnelManagerConnection);
 

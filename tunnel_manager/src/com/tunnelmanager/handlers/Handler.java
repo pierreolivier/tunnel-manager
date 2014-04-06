@@ -10,10 +10,16 @@ public interface Handler {
      * Get next free ack id
      * @return ack id
      */
-    public int nextAckId();
+    public int createAck();
+
+    /**
+     * Get next free ack id and exec runnable when response
+     * @return ack id
+     */
+    public int createAck(Runnable runnable);
 
     /**
      * Remove ack id
      */
-    public void removeAckId(int ackId);
+    public void removeAck(int ackId);
 }
