@@ -8,6 +8,7 @@ import io.netty.handler.codec.DecoderResult;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +63,7 @@ public class WebServerHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, Object msg) {
+    protected void messageReceived(ChannelHandlerContext ctx, Object msg) throws Exception {
         this.context = ctx;
 
         if (msg instanceof HttpRequest) {
@@ -100,7 +101,7 @@ public class WebServerHandler extends SimpleChannelInboundHandler<Object> {
             if (msg instanceof LastHttpContent) {
                 this.trailer = (LastHttpContent) msg;
 
-                /*Action action = AndroidManager.getAction(this);
+                WebServerAction action = WebServerManager.getAction(this);
 
                 String json;
 
@@ -111,7 +112,7 @@ public class WebServerHandler extends SimpleChannelInboundHandler<Object> {
                     json = JsonFactory.error("error", "database_error");
                 }
 
-                this.buffer.append(json);*/
+                this.buffer.append(json);
 
                 writeResponse(this.trailer, ctx);
             }
@@ -154,6 +155,11 @@ public class WebServerHandler extends SimpleChannelInboundHandler<Object> {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
         ctx.close();
+    }
+
+    public String getPage() {
+        String [] uriTokens = request.getUri().split("\\?");
+        return uriTokens[0];
     }
 
     public ChannelHandlerContext getContext() {
