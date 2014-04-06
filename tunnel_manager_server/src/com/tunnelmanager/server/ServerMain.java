@@ -1,5 +1,6 @@
 package com.tunnelmanager.server;
 
+import com.tunnelmanager.server.api.WebServer;
 import com.tunnelmanager.server.client.ClientHandler;
 import com.tunnelmanager.server.security.SecurityContextFactory;
 import io.netty.bootstrap.ServerBootstrap;
@@ -24,11 +25,6 @@ import javax.net.ssl.SSLEngine;
  */
 public class ServerMain {
     /**
-     * Server port
-     */
-    public static final int PORT = 12000;
-
-    /**
      * Init the server
      *
      * @param args java args
@@ -39,6 +35,7 @@ public class ServerMain {
 
             ServerManager.updateAuthorizedKeysFile();
 
+            startWebAPISideServer();
             startClientSideServer();
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,7 +69,7 @@ public class ServerMain {
                     })
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
 
-            b.bind(ServerMain.PORT).sync().channel().closeFuture().sync();
+            b.bind(ServerManager.clientPort).sync().channel().closeFuture().sync();
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
@@ -85,6 +82,7 @@ public class ServerMain {
      * Started into a thread
      */
     public void startWebAPISideServer() throws Exception {
-
+        WebServer webServer = new WebServer();
+        webServer.start();
     }
 }
