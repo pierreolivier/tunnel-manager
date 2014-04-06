@@ -1,10 +1,14 @@
 package com.tunnelmanager.lib.client.security;
 
+import com.tunnelmanager.lib.client.ClientManager;
 import com.tunnelmanager.security.SecurityConfiguration;
-import com.tunnelmanager.security.SecurityTrustManagerFactory;
 
 import javax.net.ssl.SSLContext;
+import java.io.FileInputStream;
+import java.security.KeyStore;
+import java.security.PublicKey;
 import java.security.Security;
+import java.security.cert.Certificate;
 
 /**
  * Class SecurityContextFactory
@@ -13,6 +17,8 @@ import java.security.Security;
  */
 public class SecurityContextFactory {
     private static SSLContext context;
+
+    private static PublicKey publicKey;
 
     static {
         String algorithm = Security.getProperty("ssl.KeyManagerFactory.algorithm");
@@ -26,9 +32,25 @@ public class SecurityContextFactory {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        try {
+            FileInputStream in = new FileInputStream(ClientManager.getTrustStorePath());
+
+            KeyStore keyStore = KeyStore.getInstance("JKS");
+            keyStore.load(in, ClientManager.getTrustStorePassword().toCharArray());
+
+            Certificate certificate = keyStore.getCertificate(keyStore.aliases().nextElement());
+            SecurityContextFactory.publicKey = certificate.getPublicKey();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static SSLContext getContext() {
         return context;
+    }
+
+    public static PublicKey getPublicKey() {
+        return publicKey;
     }
 }

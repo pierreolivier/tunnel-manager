@@ -8,5 +8,7 @@ out/
 # Config
 config.properties
 tunnel_manager_server/authorized_keys
-tunnel_manager_sample/id_rsa.pub
 tunnel_manager_server/certificate.jks
+tunnel_manager_server/public_certificate.cert
+tunnel_manager_server/client.truststore
+tunnel_manager_sample/id_rsa.pub

@@ -1,4 +1,4 @@
-package com.tunnelmanager.security;
+package com.tunnelmanager.lib.client.security;
 
 import com.tunnelmanager.utils.Log;
 
@@ -6,10 +6,9 @@ import javax.net.ssl.ManagerFactoryParameters;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactorySpi;
 import javax.net.ssl.X509TrustManager;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.cert.X509Certificate;
+import java.security.*;
+import java.security.cert.*;
+import java.util.Arrays;
 
 /**
  * Class SecurityTrustManagerFactory
@@ -33,10 +32,14 @@ public class SecurityTrustManagerFactory extends TrustManagerFactorySpi {
         }
 
         @Override
-        public void checkServerTrusted(X509Certificate[] chain, String authType) {
-            // Always trust - it is an example.
-            // You should do something in the real world.
-            Log.e("UNKNOWN SERVER CERTIFICATE: " + chain[0].getSubjectDN());
+        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+            try {
+                chain[0].verify(SecurityContextFactory.getPublicKey());
+                Log.v("server certificate trusted");
+            } catch (Exception e) {
+                Log.e("server certificate untrusted");
+                throw new CertificateException("Certificate not trusted.");
+            }
         }
     };
 
@@ -55,8 +58,7 @@ public class SecurityTrustManagerFactory extends TrustManagerFactorySpi {
     }
 
     @Override
-    protected void engineInit(ManagerFactoryParameters managerFactoryParameters)
-            throws InvalidAlgorithmParameterException {
+    protected void engineInit(ManagerFactoryParameters managerFactoryParameters) throws InvalidAlgorithmParameterException {
         // Unused
     }
 }

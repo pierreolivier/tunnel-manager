@@ -26,6 +26,10 @@ public class ClientManager {
      */
     private static String apiKey;
 
+    private static String trustStorePath;
+
+    private static String trustStorePassword;
+
     /**
      * Load properties file
      */
@@ -37,6 +41,8 @@ public class ClientManager {
 
             ClientManager.publicKeyPath = prop.getProperty("public_key_path");
             ClientManager.apiKey = prop.getProperty("api_key");
+            ClientManager.trustStorePath = prop.getProperty("trust_store_path");
+            ClientManager.trustStorePassword = prop.getProperty("trust_store_password");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -52,6 +58,14 @@ public class ClientManager {
 
     public static String getPublicKey() {
         return ClientManager.getPublicKey(ClientManager.publicKeyPath);
+    }
+
+    public static String getTrustStorePath() {
+        return trustStorePath;
+    }
+
+    public static String getTrustStorePassword() {
+        return trustStorePassword;
     }
 
     /**

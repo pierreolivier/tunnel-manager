@@ -25,6 +25,8 @@ public class SecurityKeyStore {
      * </pre>
      *
      * keytool -genkey -alias tunnel_manager_certificate -keysize 2048 -validity 400000 -keyalg RSA -dname "CN=tunnel_manager_server" -keypass tunnel_manager -storepass tunnel_manager_keystore -keystore certificate.jks
+     * keytool -export -alias tunnel_manager_certificate -keystore certificate.jks -rfc -file public_certificate.cert
+     * keytool -import -alias tunnel_manager_certificate -file public_certificate.cert -keystore client.truststore -storepass tunnel_manager_truststore
      *
      */
 
