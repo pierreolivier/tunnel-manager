@@ -14,6 +14,9 @@ import javax.net.ssl.SSLContext;
  * @author Pierre-Olivier on 06/04/2014.
  */
 public class SecurityContextFactory {
+    /**
+     * SSL context
+     */
     private static SSLContext context;
 
     static {

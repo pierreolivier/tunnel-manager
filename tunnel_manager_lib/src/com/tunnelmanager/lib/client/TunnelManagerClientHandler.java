@@ -83,7 +83,11 @@ public class TunnelManagerClientHandler extends ChannelHandlerAdapter {
         ctx.close();
     }
 
-    public void send(Command command) {
+    /**
+     * Send command to server
+     * @param command command
+     */
+    public void send(ClientCommand command) {
         if(this.context != null) {
             this.context.writeAndFlush(command);
         }

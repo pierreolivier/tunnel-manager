@@ -1,5 +1,6 @@
 package com.tunnelmanager.lib.client;
 
+import com.tunnelmanager.commands.ClientCommand;
 import com.tunnelmanager.commands.Command;
 import com.tunnelmanager.handlers.ClientSideHandler;
 import com.tunnelmanager.lib.TunnelManager;
@@ -87,6 +88,10 @@ public class TunnelManagerConnection implements ClientSideHandler {
                 });
     }
 
+    /**
+     * Connect override
+     * @param bootstrap bootstrap to use for the connection
+     */
     public void connect(Bootstrap bootstrap) {
         bootstrap
                 .connect(this.tunnelManager.getHost(), this.tunnelManager.getPort())
@@ -106,10 +111,21 @@ public class TunnelManagerConnection implements ClientSideHandler {
                 });
     }
 
+    /**
+     * Create a new bootstrap
+     * @param b bootstrap
+     * @return configured bootstrap
+     */
     private Bootstrap configureBootstrap(Bootstrap b) {
         return configureBootstrap(b, new NioEventLoopGroup());
     }
 
+    /**
+     * Configure a new bootstrap
+     * @param bootstrap bootstrap
+     * @param group group
+     * @return configured bootstrap
+     */
     public Bootstrap configureBootstrap(Bootstrap bootstrap, EventLoopGroup group) {
         this.group = group;
         bootstrap.group(group)
@@ -130,11 +146,19 @@ public class TunnelManagerConnection implements ClientSideHandler {
         return bootstrap;
     }
 
+    /**
+     * Close gracefully connection
+     */
     public void close() throws InterruptedException {
         this.group.shutdownGracefully();
     }
 
-    public boolean send(Command command) {
+    /**
+     * Send command to server
+     * @param command command
+     * @return true if command sent else false
+     */
+    public boolean send(ClientCommand command) {
         if(this.clientHandler != null) {
             this.clientHandler.send(command);
             return true;

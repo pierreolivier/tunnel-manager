@@ -7,6 +7,7 @@ import com.tunnelmanager.handlers.ServerSideHandler;
 
 /**
  * Class CreateTunnelResponseCommand
+ * Send create tunnel response to the server
  *
  * @author Pierre-Olivier on 02/04/2014.
  */
@@ -19,6 +20,11 @@ public class CreateTunnelResponseCommand extends ClientCommand {
      */
     private int tunnelStatus;
 
+    /**
+     * Default constructor
+     * @param ackId ack id
+     * @param tunnelStatus tunnel status (error, connected)
+     */
     public CreateTunnelResponseCommand(int ackId, int tunnelStatus) {
         super(ackId);
 

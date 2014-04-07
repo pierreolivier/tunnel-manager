@@ -5,6 +5,7 @@ import com.tunnelmanager.commands.authentication.LoginCommand;
 /**
  * Class ServerSideHandler
  * server handler
+ *
  * @author Pierre-Olivier on 02/04/2014.
  */
 public interface ServerSideHandler extends Handler {

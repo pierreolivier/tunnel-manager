@@ -15,6 +15,9 @@ import java.sql.SQLException;
  * @author Pierre-Olivier on 06/04/2014.
  */
 public class CreateTunnelAction extends WebServerAction implements Runnable {
+    /**
+     * Response flag
+     */
     private boolean response;
 
     /**

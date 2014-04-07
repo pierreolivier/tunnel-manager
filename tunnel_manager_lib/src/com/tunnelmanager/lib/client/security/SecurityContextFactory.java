@@ -12,12 +12,19 @@ import java.security.cert.Certificate;
 
 /**
  * Class SecurityContextFactory
+ * Create security context
  *
  * @author Pierre-Olivier on 06/04/2014.
  */
 public class SecurityContextFactory {
+    /**
+     * SSL Context
+     */
     private static SSLContext context;
 
+    /**
+     * Trusted public key
+     */
     private static PublicKey publicKey;
 
     static {

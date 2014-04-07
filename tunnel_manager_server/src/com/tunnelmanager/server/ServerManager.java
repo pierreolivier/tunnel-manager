@@ -19,8 +19,14 @@ import java.util.Properties;
  * @author Pierre-Olivier on 02/04/2014.
  */
 public class ServerManager {
+    /**
+     * Client port
+     */
     public static int clientPort;
 
+    /**
+     * Web server port
+     */
     public static int webApiPort;
 
     /**
@@ -28,12 +34,24 @@ public class ServerManager {
      */
     private static String authorizedKeysPath;
 
+    /**
+     * Certificate path
+     */
     private static String certificatePath;
 
+    /**
+     * Certificate password
+     */
     private static String certificatePassword;
 
+    /**
+     * Key store password
+     */
     private static String certificateKeyStorePassword;
 
+    /**
+     * Connected (only logged) clients
+     */
     private static HashMap<String, ClientHandler> clients = new HashMap<>();
 
     /**
@@ -94,18 +112,32 @@ public class ServerManager {
         writer.close();
     }
 
+    /**
+     * Add a new logged client
+     * @param apiKey api key
+     * @param handler client handler
+     */
     public static void addClient(String apiKey, ClientHandler handler) {
         synchronized (ServerManager.clients) {
             ServerManager.clients.put(apiKey, handler);
         }
     }
 
+    /**
+     * Get a logged client
+     * @param apiKey api key
+     * @return client handler
+     */
     public static ClientHandler getClient(String apiKey) {
         synchronized (ServerManager.clients) {
             return ServerManager.clients.get(apiKey);
         }
     }
 
+    /**
+     * Remove a logged client
+     * @param apiKey api key
+     */
     public static void removeClient(String apiKey) {
         synchronized (ServerManager.clients) {
             ServerManager.clients.remove(apiKey);

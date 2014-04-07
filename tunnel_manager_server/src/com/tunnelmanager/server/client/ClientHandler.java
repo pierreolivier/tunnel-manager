@@ -134,6 +134,10 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
         }
     }
 
+    /**
+     * Send command to client
+     * @param command command
+     */
     public void send(Command command) {
         if(this.context != null) {
             this.context.writeAndFlush(command);

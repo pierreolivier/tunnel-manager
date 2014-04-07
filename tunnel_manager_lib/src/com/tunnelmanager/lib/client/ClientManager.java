@@ -26,8 +26,14 @@ public class ClientManager {
      */
     private static String apiKey;
 
+    /**
+     * Trust store path
+     */
     private static String trustStorePath;
 
+    /**
+     * Trust store password
+     */
     private static String trustStorePassword;
 
     /**

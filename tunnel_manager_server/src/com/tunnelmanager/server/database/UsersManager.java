@@ -13,6 +13,10 @@ import java.util.List;
  * @author Pierre-Olivier on 02/04/2014.
  */
 public class UsersManager {
+    /**
+     * Get all ssh public keys from database
+     * @return list of string
+     */
     public static List<String> getAllSshPublicKeys() {
         Database database = new Database();
         List<String> resultList = new ArrayList<>();
@@ -32,6 +36,12 @@ public class UsersManager {
         return resultList;
     }
 
+    /**
+     * Get user with public key and api key
+     * @param sshPublicKey public key
+     * @param apiKey api key
+     * @return User object
+     */
     public static User getUser(String sshPublicKey, String apiKey) {
         Database database = new Database();
         User resultUser = null;

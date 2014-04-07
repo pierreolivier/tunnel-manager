@@ -6,6 +6,7 @@ import com.tunnelmanager.handlers.ServerSideHandler;
 /**
  * Class ServerCommand
  * Server to Client
+ *
  * @author Pierre-Olivier on 02/04/2014.
  */
 public abstract class ServerCommand extends Command {
@@ -13,5 +14,10 @@ public abstract class ServerCommand extends Command {
         super(ackId);
     }
 
+    /**
+     * Execute command (on client)
+     * @param handler client handler
+     * @return command to send to the server
+     */
     public abstract ClientCommand execute(ClientSideHandler handler);
 }
