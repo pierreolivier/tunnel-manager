@@ -1,7 +1,7 @@
 package com.tunnelmanager.server;
 
 import com.tunnelmanager.server.client.ClientHandler;
-import com.tunnelmanager.server.database.UsersManager;
+import com.tunnelmanager.server.database.UsersDatabaseManager;
 import com.tunnelmanager.utils.Log;
 
 import java.io.FileInputStream;
@@ -28,6 +28,16 @@ public class ServerManager {
      * Web server port
      */
     public static int webApiPort;
+
+    /**
+     * Minimum port for a ssh tunnel
+     */
+    public static int minTunnelPort;
+
+    /**
+     * Maximum port for a ssh tunnel
+     */
+    public static int maxTunnelPort;
 
     /**
      * authorized_keys path
@@ -77,6 +87,20 @@ public class ServerManager {
 
                 System.exit(1);
             }
+            try {
+                ServerManager.minTunnelPort = new Integer(prop.getProperty("min_tunnel_port", "12002"));
+            } catch (Exception e) {
+                Log.e("min_tunnel_port is not an integer");
+
+                System.exit(1);
+            }
+            try {
+                ServerManager.maxTunnelPort = new Integer(prop.getProperty("max_tunnel_port", "40000"));
+            } catch (Exception e) {
+                Log.e("max_tunnel_port is not an integer");
+
+                System.exit(1);
+            }
             ServerManager.authorizedKeysPath = prop.getProperty("authorized_keys_path");
             ServerManager.certificatePath = prop.getProperty("certificate_path");
             ServerManager.certificatePassword = prop.getProperty("certificate_password");
@@ -105,7 +129,7 @@ public class ServerManager {
     public static void updateAuthorizedKeysFile() throws SQLException, IOException, ClassNotFoundException {
         PrintWriter writer = new PrintWriter(ServerManager.authorizedKeysPath, "UTF-8");
 
-        for (String sshPublicKey : UsersManager.getAllSshPublicKeys()) {
+        for (String sshPublicKey : UsersDatabaseManager.getAllSshPublicKeys()) {
             writer.println(sshPublicKey);
         }
 

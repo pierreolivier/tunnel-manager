@@ -7,7 +7,7 @@ import com.tunnelmanager.server.api.WebServerHandler;
 import java.sql.SQLException;
 
 /**
- * Class
+ * Class Error404Action
  *
  * @author Pierre-Olivier on 06/04/2014.
  */

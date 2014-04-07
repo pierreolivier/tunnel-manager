@@ -2,6 +2,7 @@ package com.tunnelmanager.server;
 
 import com.tunnelmanager.server.api.WebServer;
 import com.tunnelmanager.server.client.ClientHandler;
+import com.tunnelmanager.server.ports.PortsManager;
 import com.tunnelmanager.server.security.SecurityContextFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
@@ -34,6 +35,8 @@ public class ServerMain {
             ServerManager.loadPropertiesFile();
 
             ServerManager.updateAuthorizedKeysFile();
+
+            PortsManager.updatePortsStatus();
 
             startWebAPISideServer();
             startClientSideServer();

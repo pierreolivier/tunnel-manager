@@ -7,7 +7,7 @@ import com.tunnelmanager.commands.authentication.LoginCommand;
 import com.tunnelmanager.handlers.ServerSideHandler;
 import com.tunnelmanager.server.ServerManager;
 import com.tunnelmanager.server.database.User;
-import com.tunnelmanager.server.database.UsersManager;
+import com.tunnelmanager.server.database.UsersDatabaseManager;
 import com.tunnelmanager.utils.Log;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
@@ -86,7 +86,7 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
 
     @Override
     public boolean login(LoginCommand command) {
-        User user = UsersManager.getUser(command.getSshPublicKey(), command.getApiKey());
+        User user = UsersDatabaseManager.getUser(command.getSshPublicKey(), command.getApiKey());
 
         if(user != null) {
             this.user = user;

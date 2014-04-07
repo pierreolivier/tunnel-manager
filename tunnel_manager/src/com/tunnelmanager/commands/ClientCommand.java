@@ -9,7 +9,7 @@ import com.tunnelmanager.handlers.ServerSideHandler;
  * @author Pierre-Olivier on 02/04/2014.
  */
 public abstract class ClientCommand extends Command {
-    protected ClientCommand(int ackId) {
+    public ClientCommand(int ackId) {
         super(ackId);
     }
 

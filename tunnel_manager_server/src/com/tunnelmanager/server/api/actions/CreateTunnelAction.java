@@ -10,7 +10,7 @@ import com.tunnelmanager.server.client.ClientHandler;
 import java.sql.SQLException;
 
 /**
- * Class
+ * Class CreateTunnelAction
  *
  * @author Pierre-Olivier on 06/04/2014.
  */

@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class UsersManager
+ * Class UsersDatabaseManager
  * Connect users table to java class
  *
  * @author Pierre-Olivier on 02/04/2014.
  */
-public class UsersManager {
+public class UsersDatabaseManager {
     /**
      * Get all ssh public keys from database
      * @return list of string
