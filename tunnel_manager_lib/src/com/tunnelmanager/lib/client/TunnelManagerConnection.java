@@ -1,7 +1,6 @@
 package com.tunnelmanager.lib.client;
 
 import com.tunnelmanager.commands.ClientCommand;
-import com.tunnelmanager.commands.Command;
 import com.tunnelmanager.handlers.ClientSideHandler;
 import com.tunnelmanager.lib.TunnelManager;
 import com.tunnelmanager.lib.client.security.SecurityContextFactory;
@@ -50,10 +49,10 @@ public class TunnelManagerConnection implements ClientSideHandler {
     /**
      * ackIds
      */
-    public HashMap<Integer, Runnable> ackIds;
+    public final HashMap<Integer, Runnable> ackIds;
 
     /**
-     * Default contructor
+     * Default constructor
      * @param tunnelManager current instance of tunnel manager
      */
     public TunnelManagerConnection(TunnelManager tunnelManager) {

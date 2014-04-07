@@ -1,7 +1,6 @@
 package com.tunnelmanager.lib.client;
 
 import com.tunnelmanager.commands.ClientCommand;
-import com.tunnelmanager.commands.Command;
 import com.tunnelmanager.commands.ServerCommand;
 import com.tunnelmanager.commands.authentication.LoginCommand;
 import com.tunnelmanager.utils.Log;

@@ -63,7 +63,7 @@ public class Database {
             String user = prop.getProperty("database_user");
             String password = prop.getProperty("database_password");
 
-            this.tablePrefix = prop.getProperty("database_prefix");
+            Database.tablePrefix = prop.getProperty("database_prefix");
 
             Class.forName("com.mysql.jdbc.Driver");
             Database.connect = DriverManager.getConnection("jdbc:mysql://" + host + "/" + database + "?user=" + user + "&password=" + password);
@@ -81,7 +81,7 @@ public class Database {
         Statement statement;
         ResultSet resultSet;
 
-        query = query.replaceAll("prefix_", this.tablePrefix);
+        query = query.replaceAll("prefix_", Database.tablePrefix);
 
         Log.e(query);
 
@@ -104,7 +104,7 @@ public class Database {
 
         Statement statement;
 
-        exec = exec.replaceAll("prefix_", this.tablePrefix);
+        exec = exec.replaceAll("prefix_", Database.tablePrefix);
 
         Log.e(exec);
 

@@ -75,7 +75,7 @@ public class ClientManager {
     }
 
     /**
-     * Get public key of spefific path
+     * Get public key of specific path
      * @param path path of id_rsa.pub
      * @return two first tokens of id_rsa.pub
      */

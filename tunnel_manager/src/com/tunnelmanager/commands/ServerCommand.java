@@ -1,7 +1,6 @@
 package com.tunnelmanager.commands;
 
 import com.tunnelmanager.handlers.ClientSideHandler;
-import com.tunnelmanager.handlers.ServerSideHandler;
 
 /**
  * Class ServerCommand

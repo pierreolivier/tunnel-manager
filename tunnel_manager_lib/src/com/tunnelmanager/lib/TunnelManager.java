@@ -1,10 +1,7 @@
 package com.tunnelmanager.lib;
 
-import com.tunnelmanager.commands.authentication.LoginCommand;
-import com.tunnelmanager.handlers.ClientSideHandler;
 import com.tunnelmanager.lib.client.ClientManager;
 import com.tunnelmanager.lib.client.TunnelManagerConnection;
-import com.tunnelmanager.utils.Log;
 
 /**
  * Class TunnelManager
@@ -44,7 +41,7 @@ public class TunnelManager {
     }
 
     /**
-     * Initilize the library
+     * Initialize the library
      */
     public void initialize() {
         // Load configuration

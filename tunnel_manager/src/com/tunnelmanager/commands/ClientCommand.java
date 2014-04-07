@@ -1,6 +1,5 @@
 package com.tunnelmanager.commands;
 
-import com.tunnelmanager.handlers.ClientSideHandler;
 import com.tunnelmanager.handlers.ServerSideHandler;
 
 /**
@@ -10,7 +9,7 @@ import com.tunnelmanager.handlers.ServerSideHandler;
  * @author Pierre-Olivier on 02/04/2014.
  */
 public abstract class ClientCommand extends Command {
-    public ClientCommand(int ackId) {
+    protected ClientCommand(int ackId) {
         super(ackId);
     }
 

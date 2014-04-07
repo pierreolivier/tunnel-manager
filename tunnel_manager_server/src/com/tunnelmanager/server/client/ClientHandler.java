@@ -35,7 +35,7 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
     /**
      * ackIds
      */
-    public HashMap<Integer, Runnable> ackIds;
+    private final HashMap<Integer, Runnable> ackIds;
 
     public ClientHandler() {
         super();

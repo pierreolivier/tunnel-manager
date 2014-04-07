@@ -48,7 +48,7 @@ public class CreateTunnelAction extends WebServerAction implements Runnable {
 
                 for (int i = 0; i < 10; i++) {
                     Thread.sleep(100);
-                    if (this.response == true) {
+                    if (this.response) {
                         break;
                     }
                 }

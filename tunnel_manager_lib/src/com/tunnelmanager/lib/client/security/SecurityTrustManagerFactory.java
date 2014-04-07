@@ -8,7 +8,6 @@ import javax.net.ssl.TrustManagerFactorySpi;
 import javax.net.ssl.X509TrustManager;
 import java.security.*;
 import java.security.cert.*;
-import java.util.Arrays;
 
 /**
  * Class SecurityTrustManagerFactory

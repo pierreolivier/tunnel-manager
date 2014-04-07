@@ -52,7 +52,7 @@ public class ServerManager {
     /**
      * Connected (only logged) clients
      */
-    private static HashMap<String, ClientHandler> clients = new HashMap<>();
+    private final static HashMap<String, ClientHandler> clients = new HashMap<>();
 
     /**
      * Load properties file

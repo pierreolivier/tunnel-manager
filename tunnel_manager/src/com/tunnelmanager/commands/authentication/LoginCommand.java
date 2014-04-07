@@ -1,9 +1,7 @@
 package com.tunnelmanager.commands.authentication;
 
 import com.tunnelmanager.commands.ClientCommand;
-import com.tunnelmanager.commands.Command;
 import com.tunnelmanager.commands.ServerCommand;
-import com.tunnelmanager.handlers.ClientSideHandler;
 import com.tunnelmanager.handlers.ServerSideHandler;
 
 /**

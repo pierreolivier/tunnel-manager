@@ -2,7 +2,6 @@ package com.tunnelmanager.commands.tunnel;
 
 import com.tunnelmanager.commands.ClientCommand;
 import com.tunnelmanager.commands.ServerCommand;
-import com.tunnelmanager.handlers.ClientSideHandler;
 import com.tunnelmanager.handlers.ServerSideHandler;
 
 /**

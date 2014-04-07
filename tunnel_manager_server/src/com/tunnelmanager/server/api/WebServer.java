@@ -3,7 +3,6 @@ package com.tunnelmanager.server.api;
 import com.tunnelmanager.server.ServerManager;
 import com.tunnelmanager.server.security.SecurityContextFactory;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;

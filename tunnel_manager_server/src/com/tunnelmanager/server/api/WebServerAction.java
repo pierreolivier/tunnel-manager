@@ -52,7 +52,7 @@ public abstract class WebServerAction {
     /**
      * Check if post names exist
      * @param args list of post name
-     * @return
+     * @return true if post exists
      */
     public boolean checkPost(String... args) {
         if(this.handler.getPost() == null) {
