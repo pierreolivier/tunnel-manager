@@ -36,8 +36,6 @@ public class ServerMain {
 
             ServerManager.updateAuthorizedKeysFile();
 
-            PortsManager.updatePortsStatus();
-
             startWebAPISideServer();
             startClientSideServer();
         } catch (Exception e) {
