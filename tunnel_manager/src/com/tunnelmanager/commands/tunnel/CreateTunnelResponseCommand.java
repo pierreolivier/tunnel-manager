@@ -20,25 +20,44 @@ public class CreateTunnelResponseCommand extends ClientCommand {
     private int tunnelStatus;
 
     /**
+     * Bound port
+     */
+    private int port;
+
+    /**
      * Default constructor
      * @param ackId ack id
      * @param tunnelStatus tunnel status (error, connected)
      */
-    public CreateTunnelResponseCommand(int ackId, int tunnelStatus) {
+    public CreateTunnelResponseCommand(int ackId, int tunnelStatus, int port) {
         super(ackId);
 
         this.tunnelStatus = tunnelStatus;
+        this.port = port;
     }
 
     @Override
     public ServerCommand execute(ServerSideHandler handler) {
+        if(this.tunnelStatus == CONNECTED) {
+            handler.portBound(this);
+        }
+
         return null;
+    }
+
+    public int getTunnelStatus() {
+        return tunnelStatus;
+    }
+
+    public int getPort() {
+        return port;
     }
 
     @Override
     public String toString() {
         return "CreateTunnelResponseCommand{" +
                 "tunnelStatus=" + tunnelStatus +
+                ", port=" + port +
                 '}';
     }
 }

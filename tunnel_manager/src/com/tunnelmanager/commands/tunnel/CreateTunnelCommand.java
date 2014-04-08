@@ -52,7 +52,7 @@ public class CreateTunnelCommand extends ServerCommand {
 
     @Override
     public ClientCommand execute(ClientSideHandler handler) {
-        return new CreateTunnelResponseCommand(this.ackId, CreateTunnelResponseCommand.CONNECTED);
+        return new CreateTunnelResponseCommand(this.ackId, CreateTunnelResponseCommand.CONNECTED, this.port);
     }
 
     @Override

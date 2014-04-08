@@ -4,10 +4,12 @@ import com.tunnelmanager.commands.ClientCommand;
 import com.tunnelmanager.commands.Command;
 import com.tunnelmanager.commands.ServerCommand;
 import com.tunnelmanager.commands.authentication.LoginCommand;
+import com.tunnelmanager.commands.tunnel.CreateTunnelResponseCommand;
 import com.tunnelmanager.handlers.ServerSideHandler;
 import com.tunnelmanager.server.ServerManager;
 import com.tunnelmanager.server.database.User;
 import com.tunnelmanager.server.database.UsersDatabaseManager;
+import com.tunnelmanager.server.ports.PortsManager;
 import com.tunnelmanager.utils.Log;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
@@ -102,6 +104,11 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
     }
 
     @Override
+    public void portBound(CreateTunnelResponseCommand command) {
+        PortsManager.validatePort(this.user, command.getPort());
+    }
+
+    @Override
     public int createAck() {
         return createAck(null);
     }
@@ -142,5 +149,9 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
         if(this.context != null) {
             this.context.writeAndFlush(command);
         }
+    }
+
+    public User getUser() {
+        return user;
     }
 }

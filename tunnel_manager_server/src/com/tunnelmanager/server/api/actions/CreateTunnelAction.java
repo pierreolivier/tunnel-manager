@@ -6,6 +6,7 @@ import com.tunnelmanager.server.api.JsonFactory;
 import com.tunnelmanager.server.api.WebServerAction;
 import com.tunnelmanager.server.api.WebServerHandler;
 import com.tunnelmanager.server.client.ClientHandler;
+import com.tunnelmanager.server.ports.PortsManager;
 
 import java.sql.SQLException;
 
@@ -31,16 +32,17 @@ public class CreateTunnelAction extends WebServerAction implements Runnable {
 
     @Override
     public String onExecute() throws SQLException, ClassNotFoundException, InterruptedException {
-        if(checkPost("api_key", "type", "port", "host", "host_port")) {
+        if(checkPost("api_key", "type", "host", "host_port")) {
             String apiKey = getPost("api_key");
             int type = Integer.parseInt(getPost("type"));
-            int port = Integer.parseInt(getPost("port"));
             String host = getPost("host");
             int hostPort = Integer.parseInt(getPost("host_port"));
 
             ClientHandler handler = ServerManager.getClient(apiKey);
 
-            if(handler != null) {
+            if(handler != null && handler.getUser() != null) {
+                int port = PortsManager.acquirePort(handler.getUser());
+
                 CreateTunnelCommand createTunnelCommand = new CreateTunnelCommand(handler.createAck(this), type, port, host, hostPort);
 
                 this.response = false;
