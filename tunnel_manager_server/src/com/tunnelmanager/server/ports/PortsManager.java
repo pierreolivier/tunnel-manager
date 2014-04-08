@@ -54,7 +54,34 @@ public class PortsManager {
                     }
                 } while (line != null);
             } else if (OS.contains("nix") || OS.contains("nux") || OS.contains("aix")) {
-                // TODO
+                Process process = Runtime.getRuntime().exec("netstat -lntp");
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+                String line;
+                do {
+                    line = reader.readLine();
+                    if (line != null) {
+                        String[] tokens = line.split(":");
+                        String[] tokensPid = line.split(" ");
+
+                        String pid = tokensPid[tokensPid.length - 1];
+
+                        if (tokens.length == 3) { // x.x.x.x:
+                            String[] tokensPort = tokens[1].split(" ");
+
+                            if (tokensPort.length >= 1 && tokensPort[0].matches("^[0-9]*$")) {
+                                PortsManager.portsStatus.put(Integer.parseInt(tokensPort[0]), new PortStatus(PortStatus.PortState.BOUND, pid));
+                            }
+                        } else if (tokens.length == 5) { // [::]:
+                            String[] tokensPort = tokens[3].split(" ");
+
+                            if (tokensPort.length >= 1 && tokensPort[0].matches("^[0-9]*$")) {
+                                PortsManager.portsStatus.put(Integer.parseInt(tokensPort[0]), new PortStatus(PortStatus.PortState.BOUND, pid));
+                            }
+                        }
+                    }
+                } while (line != null);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,7 +107,22 @@ public class PortsManager {
                     }
                 } while (line != null);
             } else if (OS.contains("nix") || OS.contains("nux") || OS.contains("aix")) {
-                return null;
+                Process process = Runtime.getRuntime().exec("netstat -lntp");
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+                String line;
+                do {
+                    line = reader.readLine();
+                    if (line != null && line.matches(".*" + port + ".*")) {
+                        String[] tokensPid = line.split("/");
+                        if(tokensPid.length > 0) {
+                            String[] subTokensPid = tokensPid[0].split(" ");
+
+                            return subTokensPid[subTokensPid.length - 1];
+                        }
+                    }
+                } while (line != null);
             }
         } catch (Exception e) {
             e.printStackTrace();
