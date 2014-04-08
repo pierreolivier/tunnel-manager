@@ -43,12 +43,12 @@ public class CreateTunnelAction extends WebServerAction implements Runnable {
             if(handler != null && handler.getUser() != null) {
                 int port = PortsManager.acquirePort(handler.getUser());
 
-                CreateTunnelCommand createTunnelCommand = new CreateTunnelCommand(handler.createAck(this), type, port, host, hostPort);
+                CreateTunnelCommand createTunnelCommand = new CreateTunnelCommand(handler.createAck(this), type, port, host, hostPort, ServerManager.getSshUserName(), ServerManager.getSshHost());
 
                 this.response = false;
                 handler.send(createTunnelCommand);
 
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < 120; i++) {
                     Thread.sleep(100);
                     if (this.response) {
                         break;
@@ -56,7 +56,13 @@ public class CreateTunnelAction extends WebServerAction implements Runnable {
                 }
 
                 if(this.response) {
-                    return JsonFactory.simpleJson("command", "create_tunnel", "message", "executed");
+                    if(PortsManager.getPid(port) != null) {
+                        PortsManager.validatePort(handler.getUser(), port);
+
+                        return JsonFactory.simpleJson("command", "create_tunnel", "message", "executed");
+                    } else {
+                        return JsonFactory.simpleJson("command", "create_tunnel", "message", "ssh_error");
+                    }
                 } else {
                     return JsonFactory.error("create_tunnel", "timeout");
                 }

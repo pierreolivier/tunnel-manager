@@ -205,4 +205,9 @@ public class TunnelManagerConnection implements ClientSideHandler {
             this.tunnelManager.getTunnelManagerHandler().onLoginResponse(status);
         }
     }
+
+    @Override
+    public String getPrivateKeyPath() {
+        return ClientManager.getPrivateKeyPath();
+    }
 }

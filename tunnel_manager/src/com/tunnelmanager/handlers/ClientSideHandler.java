@@ -12,4 +12,6 @@ public interface ClientSideHandler extends Handler {
      * @param status login status
      */
     public void onLoginResponse(int status);
+
+    public String getPrivateKeyPath();
 }

@@ -44,6 +44,10 @@ public class ServerManager {
      */
     private static String authorizedKeysPath;
 
+    private static String sshUserName;
+
+    private static String sshHost;
+
     /**
      * Certificate path
      */
@@ -102,6 +106,9 @@ public class ServerManager {
                 System.exit(1);
             }
             ServerManager.authorizedKeysPath = prop.getProperty("authorized_keys_path");
+            ServerManager.sshUserName = prop.getProperty("ssh_username");
+            ServerManager.sshHost = prop.getProperty("ssh_host");
+            ServerManager.authorizedKeysPath = prop.getProperty("authorized_keys_path");
             ServerManager.certificatePath = prop.getProperty("certificate_path");
             ServerManager.certificatePassword = prop.getProperty("certificate_password");
             ServerManager.certificateKeyStorePassword = prop.getProperty("certificate_key_store_password");
@@ -112,6 +119,14 @@ public class ServerManager {
 
     public static String getAuthorizedKeysPath() {
         return authorizedKeysPath;
+    }
+
+    public static String getSshUserName() {
+        return sshUserName;
+    }
+
+    public static String getSshHost() {
+        return sshHost;
     }
 
     public static String getCertificatePath() {

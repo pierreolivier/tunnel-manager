@@ -17,6 +17,11 @@ import java.util.Properties;
  */
 public class ClientManager {
     /**
+     * id_rsa path
+     */
+    private static String privateKeyPath;
+
+    /**
      * id_rsa.pub path
      */
     private static String publicKeyPath;
@@ -45,13 +50,18 @@ public class ClientManager {
             InputStream input = new FileInputStream("config.properties");
             prop.load(input);
 
-            ClientManager.publicKeyPath = prop.getProperty("public_key_path");
+            ClientManager.privateKeyPath = prop.getProperty("private_key_path");
+            ClientManager.publicKeyPath = ClientManager.privateKeyPath + ".pub";
             ClientManager.apiKey = prop.getProperty("api_key");
             ClientManager.trustStorePath = prop.getProperty("trust_store_path");
             ClientManager.trustStorePassword = prop.getProperty("trust_store_password");
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static String getPrivateKeyPath() {
+        return privateKeyPath;
     }
 
     public static String getPublicKeyPath() {
