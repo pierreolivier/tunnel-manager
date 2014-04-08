@@ -16,7 +16,6 @@ public class SampleLauncher {
         TunnelHandler handler = new TunnelHandler();
 
         TunnelManager tunnelManager = new TunnelManager("127.0.0.1", 12000);
-        tunnelManager = new TunnelManager("robots-war.com", 12000);
         tunnelManager.setTunnelManagerHandler(handler);
 
         tunnelManager.initialize();
