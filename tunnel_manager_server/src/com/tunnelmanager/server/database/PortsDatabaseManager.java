@@ -56,4 +56,18 @@ public class PortsDatabaseManager {
             database.clean();
         }
     }
+
+    public static void deletePort(Port port) {
+        if(port.getId() != -1) {
+            Database database = new Database();
+
+            try {
+                database.exec("DELETE FROM prefix_ports WHERE id = " + port.getId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            database.clean();
+        }
+    }
 }

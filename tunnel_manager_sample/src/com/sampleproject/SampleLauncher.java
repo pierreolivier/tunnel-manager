@@ -19,7 +19,5 @@ public class SampleLauncher {
         tunnelManager.setTunnelManagerHandler(handler);
 
         tunnelManager.initialize();
-
-
     }
 }

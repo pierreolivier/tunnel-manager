@@ -10,10 +10,12 @@ public class PortStatus {
 
     private PortState state;
     private String pid;
+    private boolean refresh;
 
     public PortStatus(PortState state, String pid) {
         this.state = state;
         this.pid = pid;
+        this.refresh = false;
     }
 
     public PortState getState() {
@@ -30,6 +32,14 @@ public class PortStatus {
 
     public void setPid(String pid) {
         this.pid = pid;
+    }
+
+    public boolean isRefresh() {
+        return refresh;
+    }
+
+    public void setRefresh(boolean refresh) {
+        this.refresh = refresh;
     }
 
     public static int getDatabaseState(PortState state) {

@@ -7,6 +7,7 @@ import com.tunnelmanager.server.database.User;
 import com.tunnelmanager.utils.Log;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
@@ -20,10 +21,8 @@ public class PortsManager {
     private final static HashMap<User, List<Port>> portsUser = new HashMap<>();
 
     private static void updatePortsStatus() {
-        String OS = System.getProperty("os.name").toLowerCase();
-
         try {
-            if(OS.contains("win")) {
+            if(ServerManager.onWindows()) {
                 Process process = Runtime.getRuntime().exec("netstat -ano");
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -52,7 +51,7 @@ public class PortsManager {
                         }
                     }
                 } while (line != null);
-            } else if (OS.contains("nix") || OS.contains("nux") || OS.contains("aix")) {
+            } else if (ServerManager.onLinux()) {
                 Process process = Runtime.getRuntime().exec("netstat -lntp");
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -94,10 +93,8 @@ public class PortsManager {
     }
 
     public static String getPid(int portNumber) {
-        String OS = System.getProperty("os.name").toLowerCase();
-
         try {
-            if(OS.contains("win")) {
+            if(ServerManager.onWindows()) {
                 Process process = Runtime.getRuntime().exec("netstat -ano");
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -111,7 +108,7 @@ public class PortsManager {
                         return tokensPid[tokensPid.length - 1];
                     }
                 } while (line != null);
-            } else if (OS.contains("nix") || OS.contains("nux") || OS.contains("aix")) {
+            } else if (ServerManager.onLinux()) {
                 Process process = Runtime.getRuntime().exec("netstat -lntp");
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -169,7 +166,44 @@ public class PortsManager {
         }
     }
 
-    public static void releasePorts(User user) {
+    public static void releasePort(User user, Integer portNumber) {
+        Port port;
+
+        synchronized (PortsManager.portsStatus) {
+            PortStatus portStatus = PortsManager.portsStatus.get(portNumber);
+            if(portStatus != null && portStatus.getPid() != null) {
+                try {
+                    if (ServerManager.onWindows()) {
+                        Runtime.getRuntime().exec("taskkill " + portStatus.getPid()).waitFor();
+                    } else if (ServerManager.onLinux()) {
+                        Runtime.getRuntime().exec("kill -9 " + portStatus.getPid()).waitFor();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            PortsManager.portsStatus.remove(portNumber);
+
+            synchronized (PortsManager.portsUser) {
+                port = getPort(user, portNumber);
+                List<Port> ports = PortsManager.portsUser.get(user);
+
+                if (ports != null && port != null) {
+                    ports.remove(port);
+
+                    if(ports.size() == 0) {
+                        PortsManager.portsUser.remove(user);
+                    }
+                }
+            }
+        }
+
+        if(port != null) {
+            PortsDatabaseManager.deletePort(port);
+        }
+    }
+
+    public static void releaseAllPorts(User user) {
         synchronized (PortsManager.portsUser) {
             PortsManager.portsUser.remove(user);
 
@@ -219,6 +253,12 @@ public class PortsManager {
             }
 
             return null;
+        }
+    }
+
+    public static PortStatus getPortStatus(Integer portNumber) {
+        synchronized (PortsManager.portsStatus) {
+            return PortsManager.portsStatus.get(portNumber);
         }
     }
 }

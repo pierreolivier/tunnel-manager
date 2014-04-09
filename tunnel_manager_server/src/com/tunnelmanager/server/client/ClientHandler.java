@@ -9,13 +9,17 @@ import com.tunnelmanager.handlers.ServerSideHandler;
 import com.tunnelmanager.server.ServerManager;
 import com.tunnelmanager.server.database.User;
 import com.tunnelmanager.server.database.UsersDatabaseManager;
+import com.tunnelmanager.server.ports.PortStatus;
 import com.tunnelmanager.server.ports.PortsManager;
 import com.tunnelmanager.utils.Log;
+import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.EventLoop;
 
 import java.util.HashMap;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Class ClientHandler
@@ -104,8 +108,10 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
     }
 
     @Override
-    public void portBound(CreateTunnelResponseCommand command) {
+    public void portBound(final CreateTunnelResponseCommand command) {
         PortsManager.validatePort(this.user, command.getPort());
+
+        scheduleTimeout(command.getPort());
     }
 
     @Override
@@ -153,5 +159,25 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
 
     public User getUser() {
         return user;
+    }
+
+    private void scheduleTimeout(final int port) {
+        final Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                PortStatus portStatus = PortsManager.getPortStatus(port);
+                if(portStatus != null) {
+                    if(!portStatus.isRefresh()) {
+                        PortsManager.releasePort(ClientHandler.this.user, port);
+                    } else {
+                        portStatus.setRefresh(false);
+                        scheduleTimeout(port);
+                    }
+                }
+            }
+        };
+
+        final EventLoop loop = this.context.channel().eventLoop();
+        loop.schedule(r, ServerManager.getTunnelTimeout(), TimeUnit.SECONDS);
     }
 }
