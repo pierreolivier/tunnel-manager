@@ -60,7 +60,7 @@ public class CreateTunnelAction extends WebServerAction implements Runnable {
                     if(PortsManager.getPid(port) != null) {
                         return JsonFactory.simpleJson("command", "create_tunnel", "message", "executed");
                     } else {
-                        return JsonFactory.simpleJson("command", "create_tunnel", "message", "ssh_error");
+                        return JsonFactory.error("create_tunnel", "ssh_error");
                     }
                 } else {
                     return JsonFactory.error("create_tunnel", "timeout");

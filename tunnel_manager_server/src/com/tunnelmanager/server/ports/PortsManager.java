@@ -261,4 +261,29 @@ public class PortsManager {
             return PortsManager.portsStatus.get(portNumber);
         }
     }
+
+    public static PortStatus getPortStatus(User user, String data) {
+        Port port = null;
+        synchronized (PortsManager.portsUser) {
+            List<Port> ports = PortsManager.portsUser.get(user);
+
+            if(ports != null) {
+                for (Port p : ports) {
+                    if (p.getData().equals(data)) {
+                        port = p;
+                    }
+                }
+            } else {
+                return null;
+            }
+        }
+
+        if(port != null) {
+            synchronized (PortsManager.portsStatus) {
+                return PortsManager.portsStatus.get(port.getLocalPort());
+            }
+        } else {
+            return null;
+        }
+    }
 }

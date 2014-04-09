@@ -2,6 +2,7 @@ package com.tunnelmanager.server.api;
 
 import com.tunnelmanager.server.api.actions.CreateTunnelAction;
 import com.tunnelmanager.server.api.actions.Error404Action;
+import com.tunnelmanager.server.api.actions.RefreshTunnelAction;
 
 /**
  * Class WebServerManager
@@ -19,6 +20,8 @@ public class WebServerManager {
 
         if(page.equals("/create_tunnel")) {
             return new CreateTunnelAction(handler);
+        } else if(page.equals("/refresh_tunnel")) {
+            return new RefreshTunnelAction(handler);
         } else {
             return new Error404Action(handler);
         }
