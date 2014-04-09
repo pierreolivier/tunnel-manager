@@ -6,10 +6,7 @@ import com.tunnelmanager.utils.Log;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Class PortsManager
@@ -63,22 +60,23 @@ public class PortsManager {
                     line = reader.readLine();
                     if (line != null) {
                         String[] tokens = line.split(":");
-                        String[] tokensPid = line.split(" ");
+                        String pid = null;
 
-                        String pid = tokensPid[tokensPid.length - 1];
+                        String[] tokensPid = line.split("/");
+                        if(tokensPid.length > 0) {
+                            String[] subTokensPid = tokensPid[0].split(" ");
 
-                        if (tokens.length == 3) { // x.x.x.x:
+                            pid = subTokensPid[subTokensPid.length - 1];
+                        }
+
+                        if (tokens.length > 1) { // x.x.x.x:
                             String[] tokensPort = tokens[1].split(" ");
 
                             if (tokensPort.length >= 1 && tokensPort[0].matches("^[0-9]*$")) {
                                 PortsManager.portsStatus.put(Integer.parseInt(tokensPort[0]), new PortStatus(PortStatus.PortState.BOUND, pid));
                             }
-                        } else if (tokens.length == 5) { // [::]:
-                            String[] tokensPort = tokens[3].split(" ");
 
-                            if (tokensPort.length >= 1 && tokensPort[0].matches("^[0-9]*$")) {
-                                PortsManager.portsStatus.put(Integer.parseInt(tokensPort[0]), new PortStatus(PortStatus.PortState.BOUND, pid));
-                            }
+                            Log.v(tokensPort[0] + pid);
                         }
                     }
                 } while (line != null);
