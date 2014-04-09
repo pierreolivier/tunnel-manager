@@ -31,4 +31,17 @@ public class PortStatus {
     public void setPid(String pid) {
         this.pid = pid;
     }
+
+    public static int getDatabaseState(PortState state) {
+        switch (state) {
+            case FREE:
+                return -1;
+            case WAITING:
+                return 0;
+            case BOUND:
+                return 1;
+        }
+
+        return 0;
+    }
 }

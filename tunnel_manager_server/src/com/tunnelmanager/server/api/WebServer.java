@@ -41,7 +41,7 @@ public class WebServer extends Thread {
                         }
                     });
 
-            b.bind(ServerManager.webApiPort).sync().channel().closeFuture().sync();
+            b.bind(ServerManager.getWebApiPort()).sync().channel().closeFuture().sync();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

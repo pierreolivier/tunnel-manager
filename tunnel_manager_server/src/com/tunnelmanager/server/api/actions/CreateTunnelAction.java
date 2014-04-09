@@ -32,16 +32,17 @@ public class CreateTunnelAction extends WebServerAction implements Runnable {
 
     @Override
     public String onExecute() throws SQLException, ClassNotFoundException, InterruptedException {
-        if(checkPost("api_key", "type", "host", "host_port")) {
+        if(checkPost("api_key", "type", "host", "host_port", "data")) {
             String apiKey = getPost("api_key");
             int type = Integer.parseInt(getPost("type"));
             String host = getPost("host");
             int hostPort = Integer.parseInt(getPost("host_port"));
+            String data = getPost("data");
 
             ClientHandler handler = ServerManager.getClient(apiKey);
 
             if(handler != null && handler.getUser() != null) {
-                int port = PortsManager.acquirePort(handler.getUser());
+                int port = PortsManager.acquirePort(handler.getUser(), data);
 
                 CreateTunnelCommand createTunnelCommand = new CreateTunnelCommand(handler.createAck(this), type, port, host, hostPort, ServerManager.getSshUserName(), ServerManager.getSshHost());
 

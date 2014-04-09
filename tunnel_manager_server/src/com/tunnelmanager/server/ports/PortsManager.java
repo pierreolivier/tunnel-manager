@@ -1,6 +1,8 @@
 package com.tunnelmanager.server.ports;
 
 import com.tunnelmanager.server.ServerManager;
+import com.tunnelmanager.server.database.Port;
+import com.tunnelmanager.server.database.PortsDatabaseManager;
 import com.tunnelmanager.server.database.User;
 import com.tunnelmanager.utils.Log;
 
@@ -15,7 +17,7 @@ import java.util.*;
  */
 public class PortsManager {
     private final static HashMap<Integer, PortStatus> portsStatus = new HashMap<>();
-    private final static HashMap<User, List<Integer>> portsUser = new HashMap<>();
+    private final static HashMap<User, List<Port>> portsUser = new HashMap<>();
 
     private static void updatePortsStatus() {
         String OS = System.getProperty("os.name").toLowerCase();
@@ -72,11 +74,16 @@ public class PortsManager {
                         if (tokens.length > 1) { // x.x.x.x:
                             String[] tokensPort = tokens[1].split(" ");
 
-                            if (tokensPort.length >= 1 && tokensPort[0].matches("^[0-9]*$")) {
+                            if (tokensPort.length > 0 && tokensPort[0].matches("^[0-9]+$")) {
                                 PortsManager.portsStatus.put(Integer.parseInt(tokensPort[0]), new PortStatus(PortStatus.PortState.BOUND, pid));
                             }
+                        }
 
-                            Log.v(tokensPort[0] + pid);
+                        if(tokens.length > 3) { // ::1: or :::
+                            String[] tokensPort = tokens[3].split(" ");
+                            if (tokensPort.length > 0 && tokensPort[0].matches("^[0-9]+$")) {
+                                PortsManager.portsStatus.put(Integer.parseInt(tokensPort[0]), new PortStatus(PortStatus.PortState.BOUND, pid));
+                            }
                         }
                     }
                 } while (line != null);
@@ -86,7 +93,7 @@ public class PortsManager {
         }
     }
 
-    public static String getPid(int port) {
+    public static String getPid(int portNumber) {
         String OS = System.getProperty("os.name").toLowerCase();
 
         try {
@@ -98,7 +105,7 @@ public class PortsManager {
                 String line;
                 do {
                     line = reader.readLine();
-                    if (line != null && line.matches(".*" + port + ".*")) {
+                    if (line != null && line.matches(".*" + portNumber + ".*")) {
                         String[] tokensPid = line.split(" ");
 
                         return tokensPid[tokensPid.length - 1];
@@ -112,7 +119,7 @@ public class PortsManager {
                 String line;
                 do {
                     line = reader.readLine();
-                    if (line != null && line.matches(".*" + port + ".*")) {
+                    if (line != null && line.matches(".*" + portNumber + ".*")) {
                         String[] tokensPid = line.split("/");
                         if(tokensPid.length > 0) {
                             String[] subTokensPid = tokensPid[0].split(" ");
@@ -129,8 +136,8 @@ public class PortsManager {
         return null;
     }
 
-    public static Integer acquirePort(User user) {
-        Integer port;
+    public static Integer acquirePort(User user, String data) {
+        Integer portNumber;
 
         synchronized (PortsManager.portsStatus) {
             updatePortsStatus();
@@ -138,23 +145,26 @@ public class PortsManager {
             Random random = new Random();
 
             do {
-                port = new Integer(random.nextInt(ServerManager.maxTunnelPort - ServerManager.minTunnelPort) + ServerManager.minTunnelPort);
-            } while(PortsManager.portsStatus.containsKey(port));
+                portNumber = new Integer(random.nextInt(ServerManager.getMaxTunnelPort() - ServerManager.getMinTunnelPort()) + ServerManager.getMinTunnelPort());
+            } while(PortsManager.portsStatus.containsKey(portNumber));
 
-            PortsManager.portsStatus.put(new Integer(port), new PortStatus(PortStatus.PortState.WAITING, null));
+            PortsManager.portsStatus.put(new Integer(portNumber), new PortStatus(PortStatus.PortState.WAITING, null));
 
-            addPortToUser(user, new Integer(port));
+            addPortToUser(user, new Integer(portNumber), data);
         }
 
-        return port;
+        return portNumber;
     }
 
-    public static void validatePort(User user, Integer port) {
-        if(isPortToUser(user, port)) {
+    public static void validatePort(User user, Integer portNumber) {
+        Port port = getPort(user, portNumber);
+        if(port != null) {
             synchronized (PortsManager.portsStatus) {
-                PortStatus portStatus = PortsManager.portsStatus.get(port);
+                PortStatus portStatus = PortsManager.portsStatus.get(portNumber);
                 portStatus.setState(PortStatus.PortState.BOUND);
-                portStatus.setPid(getPid(port));
+                portStatus.setPid(getPid(portNumber));
+
+                port.setState(PortStatus.getDatabaseState(PortStatus.PortState.BOUND));
             }
         }
     }
@@ -163,17 +173,20 @@ public class PortsManager {
         synchronized (PortsManager.portsUser) {
             PortsManager.portsUser.remove(user);
 
-            // TODO kill pids
+            // TODO kill pids + database clear
         }
     }
 
-    private static void addPortToUser(User user, Integer port) {
+    private static void addPortToUser(User user, Integer portNumber, String data) {
         synchronized (PortsManager.portsUser) {
-            List<Integer> ports = PortsManager.portsUser.get(user);
+            List<Port> ports = PortsManager.portsUser.get(user);
             if(ports == null) {
                 ports = new ArrayList<>();
                 PortsManager.portsUser.put(user, ports);
             }
+
+            Port port = new Port(user.getId(), portNumber, System.currentTimeMillis(), ServerManager.getTunnelTimeout(), data);
+            PortsDatabaseManager.insertPort(port);
 
             if(!ports.contains(port)) {
                 ports.add(port);
@@ -181,14 +194,31 @@ public class PortsManager {
         }
     }
 
-    private static boolean isPortToUser(User user, Integer port) {
+    private static boolean isPortToUser(User user, Integer portNumber) {
         synchronized (PortsManager.portsUser) {
-            List<Integer> ports = PortsManager.portsUser.get(user);
-            if(ports != null && ports.contains(port)) {
-                return true;
-            } else {
-                return false;
+            List<Port> ports = PortsManager.portsUser.get(user);
+
+            for(Port port : ports) {
+                if(port.getLocalPort() == portNumber) {
+                    return true;
+                }
             }
+
+            return false;
+        }
+    }
+
+    private static Port getPort(User user, Integer portNumber) {
+        synchronized (PortsManager.portsUser) {
+            List<Port> ports = PortsManager.portsUser.get(user);
+
+            for(Port port : ports) {
+                if(port.getLocalPort() == portNumber) {
+                    return port;
+                }
+            }
+
+            return null;
         }
     }
 }

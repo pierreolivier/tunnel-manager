@@ -22,22 +22,24 @@ public class ServerManager {
     /**
      * Client port
      */
-    public static int clientPort;
+    private static int clientPort;
 
     /**
      * Web server port
      */
-    public static int webApiPort;
+    private static int webApiPort;
 
     /**
      * Minimum port for a ssh tunnel
      */
-    public static int minTunnelPort;
+    private static int minTunnelPort;
 
     /**
      * Maximum port for a ssh tunnel
      */
-    public static int maxTunnelPort;
+    private static int maxTunnelPort;
+
+    private static long tunnelTimeout;
 
     /**
      * authorized_keys path
@@ -105,6 +107,13 @@ public class ServerManager {
 
                 System.exit(1);
             }
+            try {
+                ServerManager.tunnelTimeout = new Long(prop.getProperty("tunnel_timeout", "300"));
+            } catch (Exception e) {
+                Log.e("max_tunnel_port is not an integer");
+
+                System.exit(1);
+            }
             ServerManager.authorizedKeysPath = prop.getProperty("authorized_keys_path");
             ServerManager.sshUserName = prop.getProperty("ssh_username");
             ServerManager.sshHost = prop.getProperty("ssh_host");
@@ -115,6 +124,26 @@ public class ServerManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static int getClientPort() {
+        return clientPort;
+    }
+
+    public static int getWebApiPort() {
+        return webApiPort;
+    }
+
+    public static int getMinTunnelPort() {
+        return minTunnelPort;
+    }
+
+    public static int getMaxTunnelPort() {
+        return maxTunnelPort;
+    }
+
+    public static long getTunnelTimeout() {
+        return tunnelTimeout;
     }
 
     public static String getAuthorizedKeysPath() {

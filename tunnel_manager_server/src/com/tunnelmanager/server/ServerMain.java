@@ -2,6 +2,7 @@ package com.tunnelmanager.server;
 
 import com.tunnelmanager.server.api.WebServer;
 import com.tunnelmanager.server.client.ClientHandler;
+import com.tunnelmanager.server.database.PortsDatabaseManager;
 import com.tunnelmanager.server.ports.PortsManager;
 import com.tunnelmanager.server.security.SecurityContextFactory;
 import com.tunnelmanager.utils.Log;
@@ -34,6 +35,8 @@ public class ServerMain {
     public void init(String args[]) {
         try {
             ServerManager.loadPropertiesFile();
+
+            PortsDatabaseManager.clearPorts();
 
             ServerManager.updateAuthorizedKeysFile();
 
@@ -71,7 +74,7 @@ public class ServerMain {
                     })
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
 
-            b.bind(ServerManager.clientPort).sync().channel().closeFuture().sync();
+            b.bind(ServerManager.getClientPort()).sync().channel().closeFuture().sync();
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
