@@ -4,23 +4,32 @@ import com.tunnelmanager.server.ServerManager;
 import com.tunnelmanager.server.database.Port;
 import com.tunnelmanager.server.database.PortsDatabaseManager;
 import com.tunnelmanager.server.database.User;
-import com.tunnelmanager.utils.Log;
 import com.tunnelmanager.utils.SystemConfiguration;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
 /**
  * Class PortsManager
+ * Manager ports on the server
  *
  * @author Pierre-Olivier on 07/04/2014.
  */
 public class PortsManager {
+    /**
+     * Ports status
+     */
     private final static HashMap<Integer, PortStatus> portsStatus = new HashMap<>();
+
+    /**
+     * Users ports
+     */
     private final static HashMap<User, List<Port>> portsUser = new HashMap<>();
 
+    /**
+     * Update portsStatus
+     */
     private static void updatePortsStatus() {
         try {
             if(SystemConfiguration.onWindows()) {
@@ -93,6 +102,11 @@ public class PortsManager {
         }
     }
 
+    /**
+     * Get a pid associated to a port
+     * @param portNumber port
+     * @return pid string
+     */
     public static String getPid(int portNumber) {
         try {
             if(SystemConfiguration.onWindows()) {
@@ -134,6 +148,13 @@ public class PortsManager {
         return null;
     }
 
+    /**
+     * Acquire a port
+     * Set port in WAITING status
+     * @param user user
+     * @param data data key
+     * @return port
+     */
     public static Integer acquirePort(User user, String data) {
         Integer portNumber;
 
@@ -154,6 +175,12 @@ public class PortsManager {
         return portNumber;
     }
 
+    /**
+     * Validate a port
+     * Set port in BOUND status
+     * @param user user
+     * @param portNumber port
+     */
     public static void validatePort(User user, Integer portNumber) {
         Port port = getPort(user, portNumber);
         if(port != null) {
@@ -167,6 +194,11 @@ public class PortsManager {
         }
     }
 
+    /**
+     * Release a port
+     * @param user user
+     * @param portNumber port
+     */
     public static void releasePort(User user, Integer portNumber) {
         Port port;
 
@@ -204,6 +236,10 @@ public class PortsManager {
         }
     }
 
+    /**
+     * Release all ports for a user
+     * @param user user
+     */
     public static void releaseAllPorts(User user) {
         synchronized (PortsManager.portsUser) {
             PortsManager.portsUser.remove(user);
@@ -212,6 +248,12 @@ public class PortsManager {
         }
     }
 
+    /**
+     * Associate a port to a user
+     * @param user user
+     * @param portNumber port
+     * @param data data key
+     */
     private static void addPortToUser(User user, Integer portNumber, String data) {
         synchronized (PortsManager.portsUser) {
             List<Port> ports = PortsManager.portsUser.get(user);
@@ -229,6 +271,12 @@ public class PortsManager {
         }
     }
 
+    /**
+     * Check if user has this port
+     * @param user user
+     * @param portNumber port
+     * @return true if the port is allocated for this user else false
+     */
     private static boolean isPortToUser(User user, Integer portNumber) {
         synchronized (PortsManager.portsUser) {
             List<Port> ports = PortsManager.portsUser.get(user);
@@ -243,6 +291,12 @@ public class PortsManager {
         }
     }
 
+    /**
+     * Get port database object
+     * @param user user
+     * @param portNumber port number
+     * @return port instance
+     */
     private static Port getPort(User user, Integer portNumber) {
         synchronized (PortsManager.portsUser) {
             List<Port> ports = PortsManager.portsUser.get(user);
@@ -257,12 +311,23 @@ public class PortsManager {
         }
     }
 
+    /**
+     * Get port status with port number
+     * @param portNumber port number
+     * @return port status
+     */
     public static PortStatus getPortStatus(Integer portNumber) {
         synchronized (PortsManager.portsStatus) {
             return PortsManager.portsStatus.get(portNumber);
         }
     }
 
+    /**
+     * Get port status with user and data key
+     * @param user user
+     * @param data data key
+     * @return port status
+     */
     public static PortStatus getPortStatus(User user, String data) {
         Port port = null;
         synchronized (PortsManager.portsUser) {

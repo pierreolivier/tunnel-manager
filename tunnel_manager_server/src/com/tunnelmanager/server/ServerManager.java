@@ -39,6 +39,9 @@ public class ServerManager {
      */
     private static int maxTunnelPort;
 
+    /**
+     * Tunnel timeout (in sec)
+     */
     private static long tunnelTimeout;
 
     /**
@@ -46,8 +49,14 @@ public class ServerManager {
      */
     private static String authorizedKeysPath;
 
+    /**
+     * SSH connection username
+     */
     private static String sshUserName;
 
+    /**
+     * SSH connection host
+     */
     private static String sshHost;
 
     /**
