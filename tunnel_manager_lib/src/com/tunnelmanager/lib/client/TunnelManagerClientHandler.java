@@ -60,7 +60,7 @@ public class TunnelManagerClientHandler extends ChannelHandlerAdapter {
 
             Log.v(command.toString());
 
-            this.tunnelManagerConnection.removeAck(command.getAckId());
+            this.tunnelManagerConnection.removeAck(command);
 
             ClientCommand response = command.execute(this.tunnelManagerConnection);
 

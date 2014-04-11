@@ -12,7 +12,6 @@ import com.tunnelmanager.server.database.UsersDatabaseManager;
 import com.tunnelmanager.server.ports.PortStatus;
 import com.tunnelmanager.server.ports.PortsManager;
 import com.tunnelmanager.utils.Log;
-import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoop;
@@ -56,7 +55,7 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
 
             Log.v("new command : " + command.toString());
 
-            removeAck(command.getAckId());
+            removeAck(command);
 
             ServerCommand response = command.execute(this);
 
@@ -137,13 +136,13 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
     }
 
     @Override
-    public void removeAck(int ackId) {
+    public void removeAck(Command command) {
         synchronized (this.ackIds) {
-            Runnable runnable = this.ackIds.get(new Integer(ackId));
+            Runnable runnable = this.ackIds.get(new Integer(command.getAckId()));
             if(runnable != null) {
                 runnable.run();
             }
-            this.ackIds.remove(new Integer(ackId));
+            this.ackIds.remove(new Integer(command.getAckId()));
         }
     }
 

@@ -1,5 +1,7 @@
 package com.tunnelmanager.handlers;
 
+import com.tunnelmanager.commands.Command;
+
 /**
  * Interface Handler
  *
@@ -21,5 +23,5 @@ public interface Handler {
     /**
      * Remove ack id
      */
-    public void removeAck(int ackId);
+    public void removeAck(Command command);
 }

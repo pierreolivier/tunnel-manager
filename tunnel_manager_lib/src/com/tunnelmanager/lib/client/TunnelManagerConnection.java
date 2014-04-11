@@ -1,6 +1,7 @@
 package com.tunnelmanager.lib.client;
 
 import com.tunnelmanager.commands.ClientCommand;
+import com.tunnelmanager.commands.Command;
 import com.tunnelmanager.handlers.ClientSideHandler;
 import com.tunnelmanager.lib.TunnelManager;
 import com.tunnelmanager.lib.client.security.SecurityContextFactory;
@@ -189,13 +190,13 @@ public class TunnelManagerConnection implements ClientSideHandler {
     }
 
     @Override
-    public void removeAck(int ackId) {
+    public void removeAck(Command command) {
         synchronized (this.ackIds) {
-            Runnable runnable = this.ackIds.get(new Integer(ackId));
+            Runnable runnable = this.ackIds.get(new Integer(command.getAckId()));
             if(runnable != null) {
                 runnable.run();
             }
-            this.ackIds.remove(new Integer(ackId));
+            this.ackIds.remove(new Integer(command.getAckId()));
         }
     }
 
