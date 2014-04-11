@@ -1,7 +1,8 @@
 package com.tunnelmanager.server.database;
 
 /**
- * Class
+ * Class Port
+ * Java table
  *
  * @author Pierre-Olivier on 09/04/2014.
  */

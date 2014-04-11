@@ -12,7 +12,8 @@ import com.tunnelmanager.server.ports.PortsManager;
 import java.sql.SQLException;
 
 /**
- * Class CreateTunnelAction
+ * Class RefreshTunnelAction
+ * Refresh an existing tunnel
  *
  * @author Pierre-Olivier on 06/04/2014.
  */

@@ -12,6 +12,7 @@ import java.sql.SQLException;
 
 /**
  * Class CreateTunnelAction
+ * Create a new tunnel
  *
  * @author Pierre-Olivier on 06/04/2014.
  */

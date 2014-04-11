@@ -8,23 +8,50 @@ import java.io.InputStreamReader;
 
 /**
  * Class SSHProcess
+ * Create a SSH processus
  *
  * @author Pierre-Olivier on 08/04/2014.
  */
 public class SSHProcess extends Thread {
+    /**
+     * Arguments given to ssh
+     */
     private String arguments;
 
+    /**
+     * Instance of the ssh process
+     */
     private Process process;
 
+    /**
+     * Standard input reader
+     */
     private BufferedReader readerInput;
+
+    /**
+     * Error input reader
+     */
     private BufferedReader readerError;
 
+    /**
+     * Error output thread
+     */
     private ErrorThread errorThread;
 
+    /**
+     * Object used for synchronization (wait)
+     */
     private final Object lock;
 
+    /**
+     * Connection status
+     */
     private boolean connected;
 
+    /**
+     * Default constructor
+     * @param arguments ssh arguments
+     */
     public SSHProcess(String arguments) {
         this.arguments = arguments;
 
@@ -32,6 +59,10 @@ public class SSHProcess extends Thread {
         this.connected = false;
     }
 
+    /**
+     * Wait for the tunnel
+     * @return true if the tunnel is opened else false
+     */
     public boolean waitTunnel() {
         try {
             this.process = Runtime.getRuntime().exec("ssh " + this.arguments);
@@ -85,6 +116,10 @@ public class SSHProcess extends Thread {
         }
     }
 
+    /**
+     * Class ErrorThread
+     * Log error into error output
+     */
     private class ErrorThread extends Thread {
         @Override
         public void run() {

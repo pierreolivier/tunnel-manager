@@ -41,12 +41,12 @@ public class CreateTunnelCommand extends ServerCommand {
     private int hostPort;
 
     /**
-     *
+     * Username used for ssh connection
      */
     private String sshUserName;
 
     /**
-     *
+     * Host used for ssh connection
      */
     private String sshHost;
 

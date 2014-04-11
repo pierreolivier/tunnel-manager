@@ -14,6 +14,9 @@ import java.sql.SQLException;
  * @author Pierre-Olivier on 02/04/2014.
  */
 public class PortsDatabaseManager {
+    /**
+     * Clear all ports in database table
+     */
     public static void clearPorts() {
         Database database = new Database();
 
@@ -26,6 +29,10 @@ public class PortsDatabaseManager {
         database.clean();
     }
 
+    /**
+     * Link a new port with database
+     * @param port port
+     */
     public static void insertPort(Port port) {
         Database database = new Database();
 
@@ -43,6 +50,10 @@ public class PortsDatabaseManager {
         database.clean();
     }
 
+    /**
+     * Update an existing port in database
+     * @param port port
+     */
     public static void updatePort(Port port) {
         if(port.getId() != -1) {
             Database database = new Database();
@@ -57,6 +68,10 @@ public class PortsDatabaseManager {
         }
     }
 
+    /**
+     * Delete an existing port in database
+     * @param port port
+     */
     public static void deletePort(Port port) {
         if(port.getId() != -1) {
             Database database = new Database();
