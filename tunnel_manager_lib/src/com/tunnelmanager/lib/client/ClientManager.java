@@ -1,5 +1,7 @@
 package com.tunnelmanager.lib.client;
 
+import com.tunnelmanager.utils.SystemConfiguration;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,7 +57,12 @@ public class ClientManager {
             ClientManager.apiKey = prop.getProperty("api_key");
             ClientManager.trustStorePath = prop.getProperty("trust_store_path");
             ClientManager.trustStorePassword = prop.getProperty("trust_store_password");
-        } catch (IOException e) {
+
+            if(SystemConfiguration.onLinux()) {
+                Runtime.getRuntime().exec("chmod 700 " + ClientManager.privateKeyPath).waitFor();
+                Runtime.getRuntime().exec("chmod 700 " + ClientManager.publicKeyPath).waitFor();
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

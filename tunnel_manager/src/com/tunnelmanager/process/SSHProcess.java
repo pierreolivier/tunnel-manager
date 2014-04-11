@@ -16,7 +16,10 @@ public class SSHProcess extends Thread {
 
     private Process process;
 
-    private BufferedReader reader;
+    private BufferedReader readerInput;
+    private BufferedReader readerError;
+
+    private ErrorThread errorThread;
 
     private final Object lock;
 
@@ -33,8 +36,12 @@ public class SSHProcess extends Thread {
         try {
             this.process = Runtime.getRuntime().exec("ssh " + this.arguments);
 
-            this.reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            this.readerInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            this.readerError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
+            this.errorThread = new ErrorThread();
+
+            this.errorThread.start();
             start();
 
             synchronized (this.lock) {
@@ -59,7 +66,7 @@ public class SSHProcess extends Thread {
         try {
             String line;
             do {
-                line = reader.readLine();
+                line = readerInput.readLine();
 
                 if (line != null) {
                     Log.v(line);
@@ -75,6 +82,24 @@ public class SSHProcess extends Thread {
 
         synchronized (this.lock) {
             this.lock.notify();
+        }
+    }
+
+    private class ErrorThread extends Thread {
+        @Override
+        public void run() {
+            try {
+                String line;
+                do {
+                    line = readerError.readLine();
+
+                    if (line != null) {
+                        Log.e(line);
+                    }
+                } while (line != null);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

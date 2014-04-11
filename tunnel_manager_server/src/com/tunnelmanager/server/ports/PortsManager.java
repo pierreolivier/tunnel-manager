@@ -5,6 +5,7 @@ import com.tunnelmanager.server.database.Port;
 import com.tunnelmanager.server.database.PortsDatabaseManager;
 import com.tunnelmanager.server.database.User;
 import com.tunnelmanager.utils.Log;
+import com.tunnelmanager.utils.SystemConfiguration;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class PortsManager {
 
     private static void updatePortsStatus() {
         try {
-            if(ServerManager.onWindows()) {
+            if(SystemConfiguration.onWindows()) {
                 Process process = Runtime.getRuntime().exec("netstat -ano");
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -51,7 +52,7 @@ public class PortsManager {
                         }
                     }
                 } while (line != null);
-            } else if (ServerManager.onLinux()) {
+            } else if (SystemConfiguration.onLinux()) {
                 Process process = Runtime.getRuntime().exec("netstat -lntp");
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -94,7 +95,7 @@ public class PortsManager {
 
     public static String getPid(int portNumber) {
         try {
-            if(ServerManager.onWindows()) {
+            if(SystemConfiguration.onWindows()) {
                 Process process = Runtime.getRuntime().exec("netstat -ano");
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -108,7 +109,7 @@ public class PortsManager {
                         return tokensPid[tokensPid.length - 1];
                     }
                 } while (line != null);
-            } else if (ServerManager.onLinux()) {
+            } else if (SystemConfiguration.onLinux()) {
                 Process process = Runtime.getRuntime().exec("netstat -lntp");
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -173,9 +174,9 @@ public class PortsManager {
             PortStatus portStatus = PortsManager.portsStatus.get(portNumber);
             if(portStatus != null && portStatus.getPid() != null) {
                 try {
-                    if (ServerManager.onWindows()) {
+                    if (SystemConfiguration.onWindows()) {
                         Runtime.getRuntime().exec("taskkill " + portStatus.getPid()).waitFor();
-                    } else if (ServerManager.onLinux()) {
+                    } else if (SystemConfiguration.onLinux()) {
                         Runtime.getRuntime().exec("kill -9 " + portStatus.getPid()).waitFor();
                     }
                 } catch (Exception e) {
