@@ -1,5 +1,6 @@
 package com.tunnelmanager.server.client;
 
+import com.tunnelmanager.commands.AckCallback;
 import com.tunnelmanager.commands.ClientCommand;
 import com.tunnelmanager.commands.Command;
 import com.tunnelmanager.commands.ServerCommand;
@@ -40,7 +41,7 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
     /**
      * ackIds
      */
-    private final HashMap<Integer, Runnable> ackIds;
+    private final HashMap<Integer, AckCallback> ackIds;
 
     public ClientHandler() {
         super();
@@ -114,12 +115,17 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
     }
 
     @Override
+    public void releasePort(CreateTunnelResponseCommand command) {
+        PortsManager.releasePort(this.user, command.getPort());
+    }
+
+    @Override
     public int createAck() {
         return createAck(null);
     }
 
     @Override
-    public int createAck(Runnable runnable) {
+    public int createAck(AckCallback callback) {
         Integer ackId;
 
         synchronized (this.ackIds) {
@@ -129,7 +135,7 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
                 ackId = new Integer(random.nextInt(5000) + 5000);
             } while(this.ackIds.containsKey(ackId));
 
-            this.ackIds.put(new Integer(ackId), runnable);
+            this.ackIds.put(new Integer(ackId), callback);
         }
 
         return ackId;
@@ -138,9 +144,9 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
     @Override
     public void removeAck(Command command) {
         synchronized (this.ackIds) {
-            Runnable runnable = this.ackIds.get(new Integer(command.getAckId()));
-            if(runnable != null) {
-                runnable.run();
+            AckCallback callback = this.ackIds.get(new Integer(command.getAckId()));
+            if(callback != null) {
+                callback.run(command);
             }
             this.ackIds.remove(new Integer(command.getAckId()));
         }

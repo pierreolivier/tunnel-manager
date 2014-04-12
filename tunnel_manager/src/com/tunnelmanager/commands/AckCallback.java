@@ -5,12 +5,6 @@ package com.tunnelmanager.commands;
  *
  * @author Pierre-Olivier on 11/04/2014.
  */
-public abstract class AckCallback<T extends Command> {
-    protected T command;
-
-    protected AckCallback(T command) {
-        this.command = command;
-    }
-
-    public abstract void run();
+public abstract class AckCallback {
+    public abstract void run(Command command);
 }

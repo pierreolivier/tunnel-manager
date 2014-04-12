@@ -76,7 +76,7 @@ public class CreateTunnelCommand extends ServerCommand {
     public ClientCommand execute(ClientSideHandler handler) {
         String type = (this.tunnelType == LOCAL ? "-L" : "-R");
 
-        SSHProcess process = new SSHProcess("-oStrictHostKeyChecking=no -i " + handler.getPrivateKeyPath() + " " + type + " " + this.port + ":" + this.host + ":" + this.hostPort + " " + this.sshUserName + "@" + this.sshHost);
+        SSHProcess process = new SSHProcess("-oStrictHostKeyChecking=no -i " + handler.getPrivateKeyPath() + " " + type + " " + this.port + ":" + this.host + ":" + this.hostPort + " " + this.sshUserName + "@" + this.sshHost, this.port);
         boolean connected = process.waitTunnel();
 
         if(connected) {

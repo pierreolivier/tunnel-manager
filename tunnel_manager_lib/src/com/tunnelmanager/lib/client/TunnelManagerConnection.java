@@ -1,5 +1,6 @@
 package com.tunnelmanager.lib.client;
 
+import com.tunnelmanager.commands.AckCallback;
 import com.tunnelmanager.commands.ClientCommand;
 import com.tunnelmanager.commands.Command;
 import com.tunnelmanager.handlers.ClientSideHandler;
@@ -50,7 +51,7 @@ public class TunnelManagerConnection implements ClientSideHandler {
     /**
      * ackIds
      */
-    public final HashMap<Integer, Runnable> ackIds;
+    public final HashMap<Integer, AckCallback> ackIds;
 
     /**
      * Default constructor
@@ -173,7 +174,7 @@ public class TunnelManagerConnection implements ClientSideHandler {
     }
 
     @Override
-    public int createAck(Runnable runnable) {
+    public int createAck(AckCallback callback) {
         Integer ackId;
 
         synchronized (this.ackIds) {
@@ -183,7 +184,7 @@ public class TunnelManagerConnection implements ClientSideHandler {
                 ackId = new Integer(random.nextInt(4000) + 1000);
             } while(this.ackIds.containsKey(ackId));
 
-            this.ackIds.put(new Integer(ackId), runnable);
+            this.ackIds.put(new Integer(ackId), callback);
         }
 
         return ackId;
@@ -192,9 +193,9 @@ public class TunnelManagerConnection implements ClientSideHandler {
     @Override
     public void removeAck(Command command) {
         synchronized (this.ackIds) {
-            Runnable runnable = this.ackIds.get(new Integer(command.getAckId()));
-            if(runnable != null) {
-                runnable.run();
+            AckCallback callback = this.ackIds.get(new Integer(command.getAckId()));
+            if(callback != null) {
+                callback.run(command);
             }
             this.ackIds.remove(new Integer(command.getAckId()));
         }

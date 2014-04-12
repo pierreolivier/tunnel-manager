@@ -40,6 +40,8 @@ public class CreateTunnelResponseCommand extends ClientCommand {
     public ServerCommand execute(ServerSideHandler handler) {
         if(this.tunnelStatus == CONNECTED) {
             handler.portBound(this);
+        } else {
+            handler.releasePort(this);
         }
 
         return null;

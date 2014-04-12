@@ -1,5 +1,6 @@
 package com.tunnelmanager.handlers;
 
+import com.tunnelmanager.commands.AckCallback;
 import com.tunnelmanager.commands.Command;
 
 /**
@@ -18,7 +19,7 @@ public interface Handler {
      * Get next free ack id and exec runnable when response
      * @return ack id
      */
-    public int createAck(Runnable runnable);
+    public int createAck(AckCallback callback);
 
     /**
      * Remove ack id

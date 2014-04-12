@@ -19,4 +19,6 @@ public interface ServerSideHandler extends Handler {
     public boolean login(LoginCommand command);
 
     public void portBound(CreateTunnelResponseCommand command);
+
+    public void releasePort(CreateTunnelResponseCommand command);
 }

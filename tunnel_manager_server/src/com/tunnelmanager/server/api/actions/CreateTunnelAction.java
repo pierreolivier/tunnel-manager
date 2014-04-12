@@ -1,6 +1,9 @@
 package com.tunnelmanager.server.api.actions;
 
+import com.tunnelmanager.commands.AckCallback;
+import com.tunnelmanager.commands.Command;
 import com.tunnelmanager.commands.tunnel.CreateTunnelCommand;
+import com.tunnelmanager.commands.tunnel.CreateTunnelResponseCommand;
 import com.tunnelmanager.server.ServerManager;
 import com.tunnelmanager.server.api.JsonFactory;
 import com.tunnelmanager.server.api.WebServerAction;
@@ -16,11 +19,16 @@ import java.sql.SQLException;
  *
  * @author Pierre-Olivier on 06/04/2014.
  */
-public class CreateTunnelAction extends WebServerAction implements Runnable {
+public class CreateTunnelAction extends WebServerAction {
     /**
      * Response flag
      */
     private boolean response;
+
+    /**
+     * Response command
+     */
+    private CreateTunnelResponseCommand commandResponse;
 
     /**
      * Default constructor
@@ -45,7 +53,18 @@ public class CreateTunnelAction extends WebServerAction implements Runnable {
             if(handler != null && handler.getUser() != null) {
                 int port = PortsManager.acquirePort(handler.getUser(), data);
 
-                CreateTunnelCommand createTunnelCommand = new CreateTunnelCommand(handler.createAck(this), type, port, host, hostPort, ServerManager.getSshUserName(), ServerManager.getSshHost());
+                AckCallback callback = new AckCallback() {
+                    @Override
+                    public void run(Command command) {
+                        if(command instanceof CreateTunnelResponseCommand) {
+                            commandResponse = (CreateTunnelResponseCommand) command;
+                        }
+
+                        response = true;
+                    }
+                };
+
+                CreateTunnelCommand createTunnelCommand = new CreateTunnelCommand(handler.createAck(callback), type, port, host, hostPort, ServerManager.getSshUserName(), ServerManager.getSshHost());
 
                 this.response = false;
                 handler.send(createTunnelCommand);
@@ -58,7 +77,7 @@ public class CreateTunnelAction extends WebServerAction implements Runnable {
                 }
 
                 if(this.response) {
-                    if(PortsManager.getPid(port) != null) {
+                    if(PortsManager.getPid(port) != null && commandResponse.getTunnelStatus() == CreateTunnelResponseCommand.CONNECTED) {
                         return JsonFactory.simpleJson("command", "create_tunnel", "message", "executed");
                     } else {
                         return JsonFactory.error("create_tunnel", "ssh_error");
@@ -72,10 +91,5 @@ public class CreateTunnelAction extends WebServerAction implements Runnable {
         } else {
             return JsonFactory.error("create_tunnel", "syntax_error");
         }
-    }
-
-    @Override
-    public void run() {
-        this.response = true;
     }
 }
