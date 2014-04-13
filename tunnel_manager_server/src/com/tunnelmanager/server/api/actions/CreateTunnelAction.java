@@ -9,6 +9,7 @@ import com.tunnelmanager.server.api.JsonFactory;
 import com.tunnelmanager.server.api.WebServerAction;
 import com.tunnelmanager.server.api.WebServerHandler;
 import com.tunnelmanager.server.client.ClientHandler;
+import com.tunnelmanager.server.ports.PortStatus;
 import com.tunnelmanager.server.ports.PortsManager;
 
 import java.sql.SQLException;
@@ -51,39 +52,44 @@ public class CreateTunnelAction extends WebServerAction {
             ClientHandler handler = ServerManager.getClient(apiKey);
 
             if(handler != null && handler.getUser() != null) {
-                int port = PortsManager.acquirePort(handler.getUser(), data);
-
-                AckCallback callback = new AckCallback() {
-                    @Override
-                    public void run(Command command) {
-                        if(command instanceof CreateTunnelResponseCommand) {
-                            commandResponse = (CreateTunnelResponseCommand) command;
-                        }
-
-                        response = true;
-                    }
-                };
-
-                CreateTunnelCommand createTunnelCommand = new CreateTunnelCommand(handler.createAck(callback), type, port, host, hostPort, ServerManager.getSshUserName(), ServerManager.getSshHost());
-
-                this.response = false;
-                handler.send(createTunnelCommand);
-
-                for (int i = 0; i < 120; i++) {
-                    Thread.sleep(100);
-                    if (this.response) {
-                        break;
-                    }
-                }
-
-                if(this.response) {
-                    if(PortsManager.getPid(port) != null && commandResponse.getTunnelStatus() == CreateTunnelResponseCommand.CONNECTED) {
-                        return JsonFactory.simpleJson("command", "create_tunnel", "message", "executed");
-                    } else {
-                        return JsonFactory.error("create_tunnel", "ssh_error");
-                    }
+                PortStatus portStatus = PortsManager.getPortStatus(handler.getUser(), data);
+                if(portStatus != null) {
+                    return JsonFactory.simpleJson("command", "create_tunnel", "message", "executed", "state", "" + portStatus.getState());
                 } else {
-                    return JsonFactory.error("create_tunnel", "timeout");
+                    int port = PortsManager.acquirePort(handler.getUser(), data);
+
+                    AckCallback callback = new AckCallback() {
+                        @Override
+                        public void run(Command command) {
+                            if(command instanceof CreateTunnelResponseCommand) {
+                                commandResponse = (CreateTunnelResponseCommand) command;
+                            }
+
+                            response = true;
+                        }
+                    };
+
+                    CreateTunnelCommand createTunnelCommand = new CreateTunnelCommand(handler.createAck(callback), type, port, host, hostPort, ServerManager.getSshUserName(), ServerManager.getSshHost());
+
+                    this.response = false;
+                    handler.send(createTunnelCommand);
+
+                    for (int i = 0; i < 120; i++) {
+                        Thread.sleep(100);
+                        if (this.response) {
+                            break;
+                        }
+                    }
+
+                    if(this.response) {
+                        if(PortsManager.getPid(port) != null && commandResponse.getTunnelStatus() == CreateTunnelResponseCommand.CONNECTED) {
+                            return JsonFactory.simpleJson("command", "create_tunnel", "message", "executed");
+                        } else {
+                            return JsonFactory.error("create_tunnel", "ssh_error");
+                        }
+                    } else {
+                        return JsonFactory.error("create_tunnel", "timeout");
+                    }
                 }
             } else {
                 return JsonFactory.error("create_tunnel", "api_key_not_found");

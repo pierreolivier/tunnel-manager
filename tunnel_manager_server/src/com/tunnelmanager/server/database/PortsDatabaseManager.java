@@ -78,6 +78,8 @@ public class PortsDatabaseManager {
 
             try {
                 database.exec("DELETE FROM prefix_ports WHERE id = " + port.getId());
+
+                port.setId(-1);
             } catch (Exception e) {
                 e.printStackTrace();
             }

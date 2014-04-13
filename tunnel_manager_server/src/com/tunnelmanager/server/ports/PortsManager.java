@@ -200,38 +200,37 @@ public class PortsManager {
      * @param portNumber port
      */
     public static void releasePort(User user, Integer portNumber) {
-        Port port;
-
-        synchronized (PortsManager.portsStatus) {
-            PortStatus portStatus = PortsManager.portsStatus.get(portNumber);
-            if(portStatus != null && portStatus.getPid() != null) {
-                try {
-                    if (SystemConfiguration.onWindows()) {
-                        Runtime.getRuntime().exec("taskkill " + portStatus.getPid()).waitFor();
-                    } else if (SystemConfiguration.onLinux()) {
-                        Runtime.getRuntime().exec("kill -9 " + portStatus.getPid()).waitFor();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            PortsManager.portsStatus.remove(portNumber);
-
-            synchronized (PortsManager.portsUser) {
-                port = getPort(user, portNumber);
-                List<Port> ports = PortsManager.portsUser.get(user);
-
-                if (ports != null && port != null) {
-                    ports.remove(port);
-
-                    if(ports.size() == 0) {
-                        PortsManager.portsUser.remove(user);
-                    }
-                }
-            }
-        }
+        Port port = getPort(user, portNumber);
 
         if(port != null) {
+            synchronized (PortsManager.portsStatus) {
+                PortStatus portStatus = PortsManager.portsStatus.get(portNumber);
+                if (portStatus != null && portStatus.getPid() != null) {
+                    try {
+                        if (SystemConfiguration.onWindows()) {
+                            Runtime.getRuntime().exec("taskkill " + portStatus.getPid()).waitFor();
+                        } else if (SystemConfiguration.onLinux()) {
+                            Runtime.getRuntime().exec("kill -9 " + portStatus.getPid()).waitFor();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                PortsManager.portsStatus.remove(portNumber);
+
+                synchronized (PortsManager.portsUser) {
+                    List<Port> ports = PortsManager.portsUser.get(user);
+
+                    if (ports != null) {
+                        ports.remove(port);
+
+                        if (ports.size() == 0) {
+                            PortsManager.portsUser.remove(user);
+                        }
+                    }
+                }
+            }
+
             PortsDatabaseManager.deletePort(port);
         }
     }
@@ -242,9 +241,33 @@ public class PortsManager {
      */
     public static void releaseAllPorts(User user) {
         synchronized (PortsManager.portsUser) {
-            PortsManager.portsUser.remove(user);
+            List<Port> ports = PortsManager.portsUser.get(user);
 
-            // TODO kill pids + database clear
+            if(ports != null) {
+                synchronized (PortsManager.portsStatus) {
+                    for(Port port : ports) {
+                        PortStatus portStatus = PortsManager.portsStatus.get(port.getLocalPort());
+                        if(portStatus != null && portStatus.getPid() != null) {
+                            try {
+                                if (SystemConfiguration.onWindows()) {
+                                    Runtime.getRuntime().exec("taskkill " + portStatus.getPid()).waitFor();
+                                } else if (SystemConfiguration.onLinux()) {
+                                    Runtime.getRuntime().exec("kill -9 " + portStatus.getPid()).waitFor();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        PortsManager.portsStatus.remove(port.getLocalPort());
+                    }
+                }
+
+                for(Port port : ports) {
+                    PortsDatabaseManager.deletePort(port);
+                }
+
+                PortsManager.portsUser.remove(user);
+            }
         }
     }
 

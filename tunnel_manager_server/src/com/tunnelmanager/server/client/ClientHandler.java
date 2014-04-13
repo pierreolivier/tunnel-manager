@@ -79,6 +79,8 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         if(this.user != null) {
+            PortsManager.releaseAllPorts(this.user);
+
             ServerManager.removeClient(this.user.getApiKey());
         }
     }
