@@ -168,6 +168,10 @@ public class ClientHandler extends ChannelHandlerAdapter implements ServerSideHa
         return user;
     }
 
+    /**
+     * Schedule tunnel auto close
+     * @param port port
+     */
     private void scheduleTimeout(final int port) {
         final Runnable r = new Runnable() {
             @Override

@@ -5,7 +5,8 @@ import com.tunnelmanager.server.database.Database;
 import java.sql.SQLException;
 
 /**
- * Class
+ * Class WebServerAction
+ * Api action
  *
  * @author Pierre-Olivier on 06/04/2014.
  */

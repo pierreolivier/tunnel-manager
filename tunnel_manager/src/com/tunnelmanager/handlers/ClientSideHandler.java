@@ -13,5 +13,9 @@ public interface ClientSideHandler extends Handler {
      */
     public void onLoginResponse(int status);
 
+    /**
+     * Return private key path
+     * @return private key path
+     */
     public String getPrivateKeyPath();
 }

@@ -16,6 +16,7 @@ import javax.net.ssl.SSLEngine;
 
 /**
  * Class WebServer
+ * Netty initialize
  *
  * @author Pierre-Olivier on 06/04/2014.
  */

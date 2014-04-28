@@ -18,6 +18,7 @@ import static io.netty.handler.codec.http.HttpVersion.*;
 
 /**
  * Class WebServerHandler
+ * Api connection
  *
  * @author Pierre-Olivier on 06/04/2014.
  */

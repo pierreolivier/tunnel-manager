@@ -6,6 +6,7 @@ import com.tunnelmanager.server.api.actions.RefreshTunnelAction;
 
 /**
  * Class WebServerManager
+ * Manage the api server
  *
  * @author Pierre-Olivier on 06/04/2014.
  */
